@@ -1,0 +1,15 @@
+Designator Footprint               Mid X         Mid Y         Ref X         Ref Y         Pad X         Pad Y TB      Rotation Comment        
+
+C1         1608[0603]         693.898mil    185.039mil    693.898mil    185.039mil    727.362mil    185.039mil  T        180.00 Cap1           
+C2         1608[0603]         693.898mil    258.858mil    693.898mil    258.858mil    660.433mil    258.858mil  T          0.00 Cap1           
+C3         1608[0603]         693.898mil    405.512mil    693.898mil    405.512mil    660.433mil    405.512mil  T        360.00 Cap1           
+C4         1608[0603]         693.898mil    332.677mil    693.898mil    332.677mil    660.433mil    332.677mil  T        360.00 Cap1           
+D1         SOD80              519.685mil     196.85mil    519.685mil     196.85mil    519.685mil    122.047mil  T         90.00 LL4148         
+L1         2012[0805]         703.898mil    491.142mil    703.898mil    491.142mil    666.496mil    491.142mil  T        360.00 Inductor       
+M1         MDBT42Q           1102.362mil    299.212mil   1102.362mil    299.213mil   1334.646mil    496.063mil  T        270.00 MDBT42Q        
+P1         HDR1X4                   0mil        250mil          0mil        400mil          0mil        400mil  T        270.00 J-LINK         
+R1         1608[0603]         693.898mil    111.221mil    693.898mil    111.221mil    660.433mil    111.221mil  T        360.00 Res            
+SW1        TL3342F160QG       255.905mil    200.787mil    255.905mil    200.787mil    389.921mil    275.591mil  T        180.00 TL3342F160QG   
+Y1         MC-146             366.142mil    401.575mil    366.142mil    401.575mil    498.031mil    418.307mil  T        180.00 XTAL-MC-146    
+M2         NRF52-MODLE            650mil        300mil          0mil          0mil          0mil          0mil  T        360.00 NRF52-MODLE    
+

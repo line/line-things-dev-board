@@ -11,7 +11,7 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
 - [LINE Things - LINE Developers](https://developers.line.biz/ja/docs/line-things/)
 - [LINE Things Starter](https://github.com/line/line-things-starter)
 
-# Groveコネクタを使う方への注意点
+## Groveコネクタを使う方への注意点
 
 本体のみ使用する場合は問題ありませんが、 **Groveコネクタの基板の説明に間違え** があります。
 

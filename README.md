@@ -11,6 +11,13 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
 - [LINE Things - LINE Developers](https://developers.line.biz/ja/docs/line-things/)
 - [LINE Things Starter](https://github.com/line/line-things-starter)
 
+## Groveコネクタを使う方への注意点
+
+本体のみ使用する場合は問題ありませんが、 **Groveコネクタの基板の説明に間違え** があります。
+
+* 基板上のP7とP8は説明が逆になっています。正しくはP7はGrove-I/Oで、P8がGrove-UARTです。
+* 基板上の説明ではP6にGrove-I2C 5Vと記載されていますが、正しくはP6がI2C(3.3V)、P2がI2C(5V)となります。
+
 ## CPUボード
 ![CPU Board](img/cpuboard.jpg)
 

@@ -679,9 +679,15 @@ Adafruit_NeoPixelライブラリを使用しています。ライブラリを管
 
 ---
 
-# 回路図
-- [CPU ボード - 回路図](https://github.com/cpulabs/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/schematic.pdf)
-- [マザーボード - 回路図](https://github.com/cpulabs/line-things-dev-board/blob/master/schematics/main_board/Outputs/schematic.pdf)
+# 回路図・アートワーク図
+- CPU ボード
+    - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/schematic.pdf)
+    - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/pcb_top.pdf)
+    - [アートワーク図 - 裏](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/pcb_bottom.pdf)
+- マザーボード
+    - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/schematic.pdf)
+    - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_top.pdf)
+    - [アートワーク図 - 裏](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_bottom.pdf)
 
 ---
 

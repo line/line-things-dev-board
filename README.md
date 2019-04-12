@@ -147,7 +147,7 @@ Arduino IDE をインストールた後、必ずボードを **接続しない�
 2. **Preferences** を開いてください
 3. 'Additional Board Manager URL' に `https://www.adafruit.com/package_adafruit_index.json` を追加します
 4. Tools -> Board menu　から **Boards Manager** を開いてください
-5. "nRF52" と検索して、**Adafruit nRF52 by Adafruit** をインストールしてください
+5. "nRF52" と検索して、**Adafruit nRF52 by Adafruit** をインストールしてください (Version 0.10.1 以上をインストールしてください)
 (*Note: Linux をお使いの方は追加でソフトウェアの設定が必要です、[こちらをご覧ください](https://learn.adafruit.com/bluefruit-nrf52-feather-learning-guide/arduino-bsp-setup)*)
 6. [CP2102N driver](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers) をインストールします
 
@@ -755,6 +755,11 @@ I2Cデバイス(マザーボード上であればOLEDディスプレイ、温度
 
 ## モーターの制御が安定しない
 DRV8830DGQRの裏側のGNDパッドがはんだ付けされていない可能性があります。なくても動きますが不安定になることがあります。基板の裏側からハンダを流し入れてください。
+
+
+## Arduinoでサンプルファイルのコンパイルが通らない
+Arduino の `Tools -> Board menu` から **Boards Manager** を開いて、"nRF52" と検索して、**Adafruit nRF52 by Adafruit** を見つけます。
+インストールされているバージョンが **0.10.1** より古い場合は、アップデートしてください。
 
 ---
 

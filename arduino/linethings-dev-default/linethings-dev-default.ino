@@ -133,10 +133,10 @@ void bleConfigure(int power) {
 
   // BLE devicename
   Bluefruit.setName(BLE_DEV_NAME);
-  Bluefruit.setConnInterval(12, 1600);  // connection interval min=20ms, max=2s
+  Bluefruit.Periph.setConnInterval(12, 1600);  // connection interval min=20ms, max=2s
   // Set the connect/disconnect callback handlers
-  Bluefruit.setConnectCallback(bleConnectEvent);
-  Bluefruit.setDisconnectCallback(bleDisconnectEvent);
+  Bluefruit.Periph.setConnectCallback(bleConnectEvent);
+  Bluefruit.Periph.setDisconnectCallback(bleDisconnectEvent);
 }
 
 void bleStartAdvertising(void) {
@@ -184,9 +184,9 @@ void bleSetupServiceUser() {
 // Event for connect BLE central
 void bleConnectEvent(uint16_t conn_handle) {
   char central_name[32] = {0};
-  uint8_t central_addr[6];
-  Bluefruit.Gap.getPeerAddr(conn_handle, central_addr);
-  Bluefruit.Gap.getPeerName(conn_handle, central_name, sizeof(central_name));
+
+  BLEConnection* connection = Bluefruit.Connection(conn_handle);
+  connection->getPeerName(central_name, sizeof(central_name));
 
   Serial.print("Connected from ");
   Serial.println(central_name);
@@ -227,7 +227,7 @@ volatile int g_flag_error_advertiseuuid = 0;
  *    CMD1(1:1Byte), don't care(0,2Byte), hash of payload(x:1Byte),
  *    UUID(x:16Byte) UUID shoud be send binary.
  */
-void bleWriteEvent(BLECharacteristic& chr, uint8_t* data, uint16_t len, uint16_t offset) {
+void bleWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data, uint16_t len) {
   byte cmd = data[0];
   byte index = data[1];
   byte length = data[2];
@@ -337,6 +337,9 @@ int compareUuid(uint8_t uuid1[], uint8_t uuid2[]){
 void setup() {
   // Serial通信初期化
   Serial.begin(9600);
+
+  //Disable LED control by bootloader
+  Bluefruit.autoConnLed(false);
 
   //スイッチを入力に設定
   pinMode(SW1, INPUT_PULLUP);

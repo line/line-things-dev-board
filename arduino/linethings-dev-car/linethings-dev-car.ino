@@ -14,7 +14,7 @@
 
 // Accelerometer Service UUID
 #define RCCAR_SERVICE_UUID "8922e970-329d-44cb-badb-10070ef94b1d"
-// [0] Speed: int8, [1] Direction: int8 (right +, left -), [2] Brake: int8 (true, false) 
+// [0] Speed: int8, [1] Direction: int8 (right +, left -), [2] Brake: int8 (true, false)
 #define RCCAR_CHARACTERISTIC_UUID "b2a70845-b1d1-4420-b260-fa9551bfe361"
 
 // PSDI Service UUID: Fixed value for Developer Trial
@@ -56,7 +56,7 @@ void loop() {
   delay(500);
 }
 
-void motorWriteCallback(BLECharacteristic& chr, uint8_t* data, uint16_t len, uint16_t offset) {
+void motorWriteCallback(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data, uint16_t len) {
   if (len < 3) {
     return;
   }
@@ -66,7 +66,7 @@ void motorWriteCallback(BLECharacteristic& chr, uint8_t* data, uint16_t len, uin
   int8_t brake = data[2];
 
   int8_t speedL, speedR;
-  
+
   if (direction > 0) {
     // Right turn
     speedL = speed;
@@ -88,7 +88,7 @@ void motorWriteCallback(BLECharacteristic& chr, uint8_t* data, uint16_t len, uin
   Serial.print(direction);
   Serial.print(" B: ");
   Serial.println(brake);
-  
+
   if (brake) {
     motorR.control(MOTOR_BRAKE, 0);
     motorL.control(MOTOR_BRAKE, 0);

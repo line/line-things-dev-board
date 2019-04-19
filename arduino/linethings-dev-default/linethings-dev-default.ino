@@ -276,7 +276,6 @@ volatile int g_js_control_mode = 0;
  *    CMD4(4:1Byte), don't care(18Byte), mode(0=Demo Mode, 1=IO Control Mode : 1Byte)
  */
 void bleWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data, uint16_t len) {
-//void bleWriteEvent(BLECharacteristic& chr, uint8_t* data, uint16_t len, uint16_t offset) {
   byte cmd = data[0];
   byte index = data[1];
   byte length = data[2];
@@ -720,7 +719,10 @@ void setup() {
   // BLE でセントラルにデータを送りつけるタイミングを作るタイマー
   timerNotify.begin(800, bleNotifyEvent);
 
-  // スイッチの設定
+  //Disable LED control by bootloader
+  Bluefruit.autoConnLed(false);
+
+  //スイッチを入力に設定
   pinMode(SW1, INPUT_PULLUP);
   pinMode(SW2, INPUT_PULLUP);
 

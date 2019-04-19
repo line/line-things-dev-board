@@ -38,6 +38,7 @@
 #define PSDI_CHARACTERISTIC_UUID "26e2b12b-85f0-4f3f-9fdd-91d114270e6e"
 
 #define BLE_DEV_NAME "LINE Things dev board"
+#define FIRMWARE_VERSION 1
 
 #define SW1 29
 #define SW2 28
@@ -708,6 +709,21 @@ int ioAnalogRead(int pin){
 /*********************************************************************************
 * Setup
 *********************************************************************************/
+void notifyBoardInfo(float acc_x, float acc_y, float acc_z, float temperature, int sw1, int sw2) {
+  int16_t tx_frame[8] = {
+    (int16_t) temperature * 100,
+    acc_x * 1000,
+    acc_y * 1000,
+    acc_z * 1000,
+    sw1,
+    sw2,
+    FIRMWARE_VERSION,
+    0
+  };
+  blesv_devboard_notify.notify((uint8_t*)tx_frame, sizeof(tx_frame));
+}
+
+
 void setup() {
   // Serial通信初期化
   Serial.begin(115200);
@@ -1121,17 +1137,7 @@ void loop() {
 
     // Notify Timing
     if (g_flag_notify && Bluefruit.connected()) {
-      int16_t sw1 = (sw1_value) ? 1 : 0;
-      int16_t sw2 = (sw2_value) ? 1 : 0;
-      int16_t tx_frame[6] = {
-        (int16_t) temperature * 100,
-        accel.cx * 1000,
-        accel.cy * 1000,
-        accel.cz * 1000,
-        sw1,
-        sw2
-      };
-      blesv_devboard_notify.notify((uint8_t*)tx_frame, sizeof(tx_frame));
+      notifyBoardInfo(accel.cx, accel.cy, accel.cz, temperature, sw1_value, sw2_value);
       g_flag_notify = 0;
     }
     delay(100);

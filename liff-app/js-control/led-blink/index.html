@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css?id=20190111_1547196772">
+  <title>JS-Framework LED Blink</title>
+</head>
+
+<body>
+
+
+  <div id="alert-liffble-notavailable" class="container-fluid my-2" style="display:none;">
+    <div class="alert alert-danger lead py-5" role="alert">
+      <i class="fas fa-exclamation-triangle"></i> BLE feature is not available.
+    </div>
+  </div>
+
+  <div class="mb-2">
+    <div id="device-list" class="list-group">
+      <button type="button" class="list-group-item disabled font-weight-bold">
+        <i class='fa fa-spinner fa-spin mr-2'></i> Finding development board
+      </button>
+      <button type="button" id="device-list-item"
+        class="list-group-item list-group-item-action justify-content-between align-items-center d-none">
+        <span><i class="fas fa-microchip"></i></span>
+        <span>
+          <strong class="device-name">Test Device</strong><br>
+          <small class="device-id">DEVICE_ID</small>
+        </span>
+        <span class="badge badge-primary badge-pill"><i class="fas fa-signal"></i> <span class="rssi"></span></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="device-cards" class="">
+    <div id="device-template" class="my-2" style="display:none;">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between py-2">
+          <div class="device-name">N/A</div>
+          <div>
+            <a href="#" class="device-status btn btn-outline-warning btn-sm disabled">Connecting...</a>
+            <a href="#" class="device-disconnect btn btn-danger btn-sm" style="display:none;">
+              <i class="fas fa-sign-out-alt"></i>
+            </a>
+          </div>
+        </div>
+        <div class="card-body container" style="display:none;">
+
+          <nav class="row">
+            <div class="nav nav-tabs col" role="tablist">
+              <a class="nav-item nav-link small active" id="nav-write-tab" data-toggle="tab" href="#nav-write" role="tab" aria-controls="nav-write" aria-selected="true">Write</a>
+              <a class="nav-item nav-link small" id="nav-read-tab" data-toggle="tab" href="#nav-read" role="tab" aria-controls="nav-read" aria-selected="true">Read</a>
+              <a class="nav-item nav-link small" id="nav-advert-tab" data-toggle="tab" href="#nav-advert" role="tab" aria-controls="nav-advert" aria-selected="true">Write advertising packet</a>
+            </div>
+          </nav>
+
+          <div class="tab-content row my-2">
+
+            <div class="tab-pane fade col show active" id="nav-write" role="tabpanel" aria-labelledby="nav-write-tab">
+              <p>none</p>
+            </div>
+
+            <div class="tab-pane fade col" id="nav-read" role="tabpanel" aria-labelledby="nav-read-tab">
+              <p>none</p>
+            </div>
+
+            <div class="tab-pane fade col" id="nav-advert" role="tabpanel" aria-labelledby="nav-advert-tab">
+              <div class="row justify-content-center">
+                <div class="col text-center">
+                  <p>
+                    <label for="uuid">Advertising UUID</label>
+                    <input type="" class="form-control uuid_text" id="uuidtext" placeholder="UUID">
+                    <small class="text-muted">Advertisingで使うUUIDを変更します。間違ったUUIDを書き込んでしまうとLINE Appから見れなくなってしまうことがあるので注意してください。
+                    書き込みしたあとにデバイスのリセットボタンを押して再起動することで反映されます。LIFFアプリも一度閉じてから再度開いてください。初期化したい場合はSW1を押しながらリセットスイッチを押すことでデフォルトのUUIDに戻ります。</small>
+                  </p>
+                  <p>
+                    <button type="button" class="setuuid btn btn-secondary"><i class="fas fa-sync-alt"></i> Write UUID</button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="log-panel" class="collapse my-2">
+    <textarea id="logbox" rows="24" class="card-body form-control input-sm text-monospace p-2" readonly></textarea>
+  </div>
+
+  <footer class="footer">
+    <div class="container-fluid my-2">
+      <div class="row align-middle">
+        <button id="sdkversionfield" class="btn btn-sm btn-light col col-6"></button>
+        <button class="btn btn-sm btn-secondary col col-2" type="button" data-toggle="collapse" data-target="#log-panel" aria-expanded="false" aria-controls="log-panel">
+          Log
+        </button>
+        <div class="col col-4"></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vConsole/3.2.0/vconsole.min.js"></script>
+  <script>
+    var vConsole = new VConsole();
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+  <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
+  <script src="../js-framework.js"></script>
+  <script src="liff-starter.js?id=20190111_1547196772"></script>
+</body>
+
+</html>

@@ -62,9 +62,12 @@ CPUボード単体での仕様です。マザーボードに接続して使用�
 # Quick Start
 予め書かれているファームウェアで、LINE Thingsの機能とボード上に搭載されたデバイスの体験をすることができます。
 LINE Things上でモーターを除くすべてのデバイスの状態を取得することや、LEDの制御を行うことができます。
-
 デバイスの電源を入れ、LINE App の LINE Things から接続することで、 Notify や デバイスへの Write を試すことができます。
 初期状態のファームウェアは出力パワーを最低に設定しています。端末をデバイスに近づけて利用してください。
+
+ファームウェアを書き換えることなく、LIFFからLINEデバイスの挙動をより高度にコントロールする機能も用意しています。
+この機能を用いると、例えば任意のタイミングでデバイスからNotifyさせたり、各種センサの値を任意に設定したり、取得することが可能です。
+これらの使い方は[Java Scriptからデバイスをより高度にコントロールする方法](tree/master/liff-app/js-control)を参照してください。
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。
 この機能は LINE Developers から Service UUID を取得して、LINE Things developers trial の独自デバイスを構築する際に、

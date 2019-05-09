@@ -1,4 +1,4 @@
-const USER_SERVICE_UUID = "f2b742dc-35e3-4e55-9def-0ce4a209c552";
+const USER_SERVICE_UUID = "981b0d79-2855-44f4-aa14-3c34012a3dd3";
 const USER_CHARACTERISTIC_NOTIFY_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
 const USER_CHARACTERISTIC_WRITE_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
 const USER_CHARACTERISTIC_IO_WRITE_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
@@ -138,7 +138,7 @@ function connectDevice(device) {
             );
 
             setup(things);
-            loop(things);
+            //loop(things);
         }).catch(e => {
             flashSDKError(e);
             onScreenLog(`ERROR on gatt.connect(${device.id}): ${e}`);
@@ -148,10 +148,25 @@ function connectDevice(device) {
     }
 }
 
+function notificationSwCallback(e) {
+    const dataBuffer = new DataView(e.target.value.buffer);
+    onScreenLog(`Notify SW ${e.target.uuid}: ${buf2hex(e.target.value.buffer)}`);
+}
+
+function notificationTempCallback(e) {
+    const dataBuffer = new DataView(e.target.value.buffer);
+    onScreenLog(`Notify Temperature : ` + String(((dataBuffer.getInt8(0) << 8) +  dataBuffer.getInt8(1)) / 100));
+
+    //getDeviceTemperature(device).innerText = String(((dataBuffer.getInt8(0) << 8) +  dataBuffer.getInt8(1)) / 100);
+}
+
 // Device initialize
 async function setup(things){
     // Enter to BLE-IO mode
-    await things.enterBleioMode().catch(e => `do not support JS-control mode. please update firmware`);
+
+    await things.enterBleioMode().catch(e => onScreenLog(`do not support JS-control mode. please update firmware`));
+    //await things.enterBleioMode();
+
     await sleep(1000);
 
     // Clear display text, ane write new message
@@ -160,15 +175,21 @@ async function setup(things){
     await things.displayWrite("Hello world");
 
     // Initial LED
-    await things.ledWrite(2, 1).catch(e => `error: ${e}\n${e.stack}`);
-    await things.ledWrite(3, 1).catch(e => `error: ${e}\n${e.stack}`);
-    await things.ledWrite(4, 1).catch(e => `error: ${e}\n${e.stack}`);
-    await things.ledWrite(5, 1).catch(e => `error: ${e}\n${e.stack}`);
+    await things.ledWrite(2, 1).catch(e => onScreenLog(`LED write error`));
+    await things.ledWrite(3, 1).catch(e => onScreenLog(`LED write error`));
+    await things.ledWrite(4, 1).catch(e => onScreenLog(`LED write error`));
+    await things.ledWrite(5, 1).catch(e => onScreenLog(`LED write error`));
+
+    await things.swNotifyEnable(3, 1, 100, notificationSwCallback).catch(e => onScreenLog(`SW Notify set error`));
+    await things.tempNotifyEnable(1000, notificationTempCallback).catch(e => onScreenLog(`Temp Notify set error`));
 }
 
 async function loop(things){
     while(true){
-        await things.displayWrite("!");
+        // Write LED
+        await things.ledWriteByte(0);
+        await sleep(1000);
+        await things.ledWriteByte(0xff);
         await sleep(1000);
     }
 }

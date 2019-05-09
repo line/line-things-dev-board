@@ -3,6 +3,8 @@ const USER_CHARACTERISTIC_NOTIFY_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
 const USER_CHARACTERISTIC_WRITE_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
 const USER_CHARACTERISTIC_IO_WRITE_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
 const USER_CHARACTERISTIC_IO_READ_UUID = "1737f2f4-c3d3-453b-a1a6-9efe69cc944f";
+const USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID = "a11bd5c0-e7da-4015-869b-d5c0087d3cc4";
+const USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID = "fe9b11a8-5f98-40d6-ae82-bea94816277f";
 
 const deviceUUIDSet = new Set();
 const connectedUUIDSet = new Set();
@@ -130,7 +132,9 @@ function connectDevice(device) {
                 USER_SERVICE_UUID,
                 USER_CHARACTERISTIC_WRITE_UUID,
                 USER_CHARACTERISTIC_IO_WRITE_UUID,
-                USER_CHARACTERISTIC_IO_READ_UUID
+                USER_CHARACTERISTIC_IO_READ_UUID,
+                USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID,
+                USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
             );
 
             setup(things);
@@ -186,7 +190,9 @@ function initializeCardForDevice(device) {
         USER_SERVICE_UUID,
         USER_CHARACTERISTIC_WRITE_UUID,
         USER_CHARACTERISTIC_IO_WRITE_UUID,
-        USER_CHARACTERISTIC_IO_READ_UUID
+        USER_CHARACTERISTIC_IO_READ_UUID,
+        USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID,
+        USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
     );
 
     template.querySelector('.setuuid').addEventListener('click', () => {

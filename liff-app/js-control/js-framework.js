@@ -66,16 +66,6 @@ class ThingsConn {
         onScreenLog('SW Notifications STOP ' + notifyCharacteristic.uuid);
     }
 
-    async enterBleioMode(){
-        const command = [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
-        await this.writeCharacteristic(command, 'control');
-    }
-
-    async enterDemoMode(){
-        const command = [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        await this.writeCharacteristic(command, 'control');
-    }
-
     async writeAdvertUuid(uuid) {
         const tx_uuid = uuid.replace(/-/g, '');
         let uuid_byte = [];
@@ -113,7 +103,7 @@ class ThingsConn {
         await this.writeCharacteristic(command, 'io');
     }
 
-    async displayClear(device) {
+    async displayClear() {
         const command = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         await this.writeCharacteristic(command, 'io');
     }

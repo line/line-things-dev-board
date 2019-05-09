@@ -46,7 +46,6 @@ async function checkAvailablityAndDo(callbackIfAvailable) {
         onScreenLog(`ERROR on getAvailability: ${e}`);
         return false;
     });
-    // onScreenLog("Check availablity: " + isAvailable);
 
     if (isAvailable) {
         document.getElementById('alert-liffble-notavailable').style.display = 'none';
@@ -64,7 +63,6 @@ async function findDevice() {
         onScreenLog(`ERROR on requestDevice: ${e}`);
         throw e;
     });
-    // onScreenLog('detect: ' + device.id);
 
     try {
         if (!deviceUUIDSet.has(device.id)) {
@@ -138,7 +136,6 @@ function connectDevice(device) {
             );
 
             setup(things);
-            //loop(things);
         }).catch(e => {
             flashSDKError(e);
             onScreenLog(`ERROR on gatt.connect(${device.id}): ${e}`);
@@ -156,42 +153,20 @@ function notificationSwCallback(e) {
 function notificationTempCallback(e) {
     const dataBuffer = new DataView(e.target.value.buffer);
     onScreenLog(`Notify Temperature : ` + String(((dataBuffer.getInt8(0) << 8) +  dataBuffer.getInt8(1)) / 100));
-
-    //getDeviceTemperature(device).innerText = String(((dataBuffer.getInt8(0) << 8) +  dataBuffer.getInt8(1)) / 100);
 }
 
 // Device initialize
 async function setup(things){
-    // Enter to BLE-IO mode
-
-    await things.enterBleioMode().catch(e => onScreenLog(`do not support JS-control mode. please update firmware`));
-    //await things.enterBleioMode();
-
-    await sleep(1000);
-
-    // Clear display text, ane write new message
     await things.displayClear();
     await things.displayControl(0, 0);
     await things.displayWrite("Hello world");
 
     // Initial LED
-    await things.ledWrite(2, 1).catch(e => onScreenLog(`LED write error`));
-    await things.ledWrite(3, 1).catch(e => onScreenLog(`LED write error`));
-    await things.ledWrite(4, 1).catch(e => onScreenLog(`LED write error`));
-    await things.ledWrite(5, 1).catch(e => onScreenLog(`LED write error`));
+    await things.ledWriteByte(0xff).catch(e => onScreenLog(`LED write error`));
 
+    //Enable Notify
     await things.swNotifyEnable(3, 1, 100, notificationSwCallback).catch(e => onScreenLog(`SW Notify set error`));
-    await things.tempNotifyEnable(1000, notificationTempCallback).catch(e => onScreenLog(`Temp Notify set error`));
-}
-
-async function loop(things){
-    while(true){
-        // Write LED
-        await things.ledWriteByte(0);
-        await sleep(1000);
-        await things.ledWriteByte(0xff);
-        await sleep(1000);
-    }
+    await things.tempNotifyEnable(2000, notificationTempCallback).catch(e => onScreenLog(`Temp Notify set error`));
 }
 
 // Setup device information card

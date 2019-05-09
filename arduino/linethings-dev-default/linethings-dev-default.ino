@@ -1,14 +1,16 @@
 /**
  * Default firmware for LINE Things development board
  * このファームウェアは2種類の動作モードがあります。
- * - Default mode(通常・出荷時)
+ * - Default mode(通常)
  *    このモードはLINE Things dev boardの機能を一通り確かめることができます。
  *    提供しているLIFFを用いて制御できます。
  *    リポジトリの /liff-app/linethings-dev-default にある LIFF と組み合わせて利用します。
  *
- * - JS Control mode
+ * - JS Control mode(USER_CHARACTERISTIC_IO_WRITE_UUIDに下記おｋ味があると有効になります)
  *    このモードはLINE Things dev board上に搭載されたデバイスと、IOの全てを全てLIFF側から制御できます。
  *    ファームウェアを変更をせずに、JSを用いてデバイスの基本的な機能を全てコントロール可能です。
+ *    USER_CHARACTERISTIC_IO_WRITE_UUIDに書き込みがあると自動的にこの機能が有効化され、
+ *    ディスプレイの自動表示はDisableされます。もとに戻すにはデバイスをリセットしてください。
  *    リポジトリの /liff-app/js-control にある LIFF と組み合わせて利用します。
  */
 
@@ -848,7 +850,7 @@ void setup() {
   pinMode(SW2, INPUT_PULLUP);
 
   // IOの設定
-  enterDemoMode();
+  setupPin();
 
   // ディスプレイの初期化
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // ディスプレイの表示に必要な電圧を生成, アドレスは 0x3C
@@ -910,18 +912,12 @@ void setup() {
   }
   bleStartAdvertising();
 
-  // BJE JS mode で起動するか選択
-  if(!digitalRead(SW2)){
-    g_js_control_mode = 1;
-    return;
-  }
-
   // SW 割り込みを設定
   attachInterrupt(SW1, sw1ChangedEvent, CHANGE);
   attachInterrupt(SW2, sw2ChangedEvent, CHANGE);
 }
 
-void enterDemoMode(){
+void setupPin(){
   //TImer STOP
   io_notify_sw_interval.stop();
   io_notify_temp_interval.stop();

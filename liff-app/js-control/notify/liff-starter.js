@@ -1,6 +1,7 @@
 const USER_SERVICE_UUID = "981b0d79-2855-44f4-aa14-3c34012a3dd3";
 const USER_CHARACTERISTIC_NOTIFY_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
 const USER_CHARACTERISTIC_WRITE_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
+const USER_CHARACTERISTIC_VERSION_UUID = "be25a3fe-92cd-41af-aeee-0a9097570815";
 const USER_CHARACTERISTIC_IO_WRITE_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
 const USER_CHARACTERISTIC_IO_READ_UUID = "1737f2f4-c3d3-453b-a1a6-9efe69cc944f";
 const USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID = "a11bd5c0-e7da-4015-869b-d5c0087d3cc4";
@@ -128,12 +129,17 @@ function connectDevice(device) {
             const things = new ThingsConn(
                 device,
                 USER_SERVICE_UUID,
+                USER_CHARACTERISTIC_VERSION_UUID,
                 USER_CHARACTERISTIC_WRITE_UUID,
                 USER_CHARACTERISTIC_IO_WRITE_UUID,
                 USER_CHARACTERISTIC_IO_READ_UUID,
                 USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID,
                 USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
             );
+
+            //Check Version
+            versionCheck(things);
+            //Setup
             setup(things);
         }).catch(e => {
             flashSDKError(e);
@@ -151,21 +157,34 @@ function notificationSwCallback(e) {
 
 function notificationTempCallback(e) {
     const dataBuffer = new DataView(e.target.value.buffer);
-    onScreenLog(`Notify Temperature : ` + String(((dataBuffer.getInt8(0) << 8) +  dataBuffer.getInt8(1)) / 100));
+    onScreenLog('Notify Temperature : ' + String(((dataBuffer.getInt8(0) << 8) +  dataBuffer.getInt8(1)) / 100));
+}
+
+//Version Check
+async function versionCheck(things){
+    await things.deviceVersionRead().catch(e => onScreenLog('Version read error'));
+    await sleep(100);
+    const version = things.versionRead();
+    if(version > 1){
+        onScreenLog('Firmware Version : ' + version);
+    }else{
+        onScreenLog('Do not support this mode. Please update device firmware. Version : ' + version);
+        window.alert('Do not support this mode. Please update device firmware');
+    }
 }
 
 // Device initialize
 async function setup(things){
-    await things.displayClear().catch(e => onScreenLog(`display clear error`));
-    await things.displayControl(0, 0).catch(e => onScreenLog(`display control error`));
-    await things.displayWrite("Hello world").catch(e => onScreenLog(`display write error`));
+    await things.displayClear().catch(e => onScreenLog('display clear error'));
+    await things.displayControl(0, 0).catch(e => onScreenLog('display control error'));
+    await things.displayWrite("Hello world").catch(e => onScreenLog('display write error'));
 
     // Initial LED
-    await things.ledWriteByte(0xff).catch(e => onScreenLog(`LED write error`)).catch(e => onScreenLog(`led write error`));
+    await things.ledWriteByte(0xff).catch(e => onScreenLog('LED write error')).catch(e => onScreenLog('led write error'));
 
     //Enable Notify
-    await things.swNotifyEnable(3, 1, 100, notificationSwCallback).catch(e => onScreenLog(`SW Notify set error`));
-    await things.tempNotifyEnable(2000, notificationTempCallback).catch(e => onScreenLog(`Temp Notify set error`));
+    await things.swNotifyEnable(3, 1, 100, notificationSwCallback).catch(e => onScreenLog('SW Notify set error'));
+    await things.tempNotifyEnable(2000, notificationTempCallback).catch(e => onScreenLog('Temp Notify set error'));
 }
 
 // Setup device information card
@@ -176,16 +195,6 @@ function initializeCardForDevice(device) {
     template.style.display = 'block';
     template.setAttribute('id', cardId);
     template.querySelector('.card > .card-header > .device-name').innerText = device.name;
-
-    const thingsUuid = new ThingsConn(
-        device,
-        USER_SERVICE_UUID,
-        USER_CHARACTERISTIC_WRITE_UUID,
-        USER_CHARACTERISTIC_IO_WRITE_UUID,
-        USER_CHARACTERISTIC_IO_READ_UUID,
-        USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID,
-        USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
-    );
 
     // Tabs
     ['write', 'read'].map(key => {
@@ -243,8 +252,6 @@ function updateConnectionStatus(device, status) {
         document.getElementById(device.id).classList.remove('active');
     }
 }
-
-
 
 
 function getDeviceCard(device) {

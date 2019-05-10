@@ -1,8 +1,9 @@
 
 class ThingsConn {
-    constructor(device, svUuid, writeUuid, writeIoUuid, readIoUuid, notifySwUuid, notifyTempUuid) {
+    constructor(device, svUuid, versionUuid, writeUuid, writeIoUuid, readIoUuid, notifySwUuid, notifyTempUuid) {
         this.device = device;
         this.svUuid = svUuid;
+        this.verUuid = versionUuid;
         this.wrUuid = writeUuid;
         this.wrIoUuid = writeIoUuid;
         this.rdIoUuid = readIoUuid;
@@ -183,7 +184,7 @@ class ThingsConn {
 
     async deviceRead() {
         const readCmdCharacteristic = await this.getCharacteristic(
-            this.device, this.svUuid, this.rdIoUuid);
+            this.device, this.svUuid, this.rdIoUuid).catch(e => onScreenLog(`error : deviceRead(), getCharacteristic`));
 
         const valueBuffer = await this.readCharacteristic(readCmdCharacteristic).catch(e => {
             onScreenLog('Read Value  : ' + "error");
@@ -193,6 +194,26 @@ class ThingsConn {
         const result = [valueBuffer.getInt16(0, true), valueBuffer.getInt16(2, true)];
         onScreenLog('Read Value  : ' + result[0] + ", " + result[1]);
         this.readvalue = (result[0] * 65536) + result[1];
+    }
+
+
+    async deviceVersionRead() {
+        const readCmdCharacteristic = await this.getCharacteristic(
+            this.device, this.svUuid, this.verUuid).catch(e => onScreenLog(`error : deviceVersionRead(), getCharacteristic`));
+
+        const valueBuffer = await this.readCharacteristic(readCmdCharacteristic).catch(e => {
+            onScreenLog('error : deviceVersionRead()');
+            this.version = 1;
+            return null;
+        });
+
+        const result = valueBuffer.getInt8(0);
+        onScreenLog('Version : ' + result);
+        this.version = result;
+    }
+
+    versionRead(){
+        return this.version;
     }
 
     valueRead(){

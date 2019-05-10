@@ -209,6 +209,12 @@ function initializeCardForDevice(device) {
         nav['aria-labelledby'] = tab.id;
     })
 
+    // Device disconnect button
+    template.querySelector('.device-disconnect').addEventListener('click', () => {
+        onScreenLog('Clicked disconnect button');
+        device.gatt.disconnect();
+    });
+
     // Remove existing same id card
     const oldCardElement = getDeviceCard(device);
     if (oldCardElement && oldCardElement.parentNode) {

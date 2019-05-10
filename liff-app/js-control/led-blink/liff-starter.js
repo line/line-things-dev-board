@@ -142,7 +142,7 @@ function connectDevice(device) {
             versionCheck(things);
             setup(things);
             loop(things);
-            
+
         }).catch(e => {
             flashSDKError(e);
             onScreenLog(`ERROR on gatt.connect(${device.id}): ${e}`);
@@ -197,6 +197,12 @@ function initializeCardForDevice(device) {
     template.style.display = 'block';
     template.setAttribute('id', cardId);
     template.querySelector('.card > .card-header > .device-name').innerText = device.name;
+
+    // Device disconnect button
+    template.querySelector('.device-disconnect').addEventListener('click', () => {
+        onScreenLog('Clicked disconnect button');
+        device.gatt.disconnect();
+    });
 
     // Tabs
     ['write', 'read'].map(key => {

@@ -138,7 +138,7 @@ function connectDevice(device) {
                 USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID,
                 USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
             );
-            
+
             //Check Version
             versionCheck(things);
 
@@ -197,6 +197,12 @@ function initializeCardForDevice(device) {
     template.style.display = 'block';
     template.setAttribute('id', cardId);
     template.querySelector('.card > .card-header > .device-name').innerText = device.name;
+
+    // Device disconnect button
+    template.querySelector('.device-disconnect').addEventListener('click', () => {
+        onScreenLog('Clicked disconnect button');
+        device.gatt.disconnect();
+    });
 
     // Tabs
     ['write', 'read'].map(key => {

@@ -20,9 +20,6 @@ class ThingsConn {
             hash = hash + uuid_byte[i];
         }
 
-        onScreenLog(tx_uuid);
-
-
         const header = [1, 0, 0, hash];
         const command = header.concat(uuid_byte);
         await this.writeCharacteristic(command, 'control').catch(e => onScreenLog(`error : writeAdvertUuid()`));
@@ -54,7 +51,6 @@ class ThingsConn {
         await notifyCharacteristic.stopNotifications().catch(e => onScreenLog(`error : tempNotifyDisable()`));
         onScreenLog('Temperature Notifications STOP ' + notifyCharacteristic.uuid);
     }
-
 
     async swNotifyEnable(source, mode, interval, callback){
         const notifyCharacteristic = await this.getCharacteristic(

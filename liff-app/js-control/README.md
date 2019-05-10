@@ -47,7 +47,7 @@ led-blinkはloopコードを含んでいます。あくまでArduinoライクに
 uuidにはテキストとして書き換えたいUUIDを設定します。なお、このメソッドを実行しても即座には反映されず、デバイスのリセットとLIFFの再立ち上げが
 必要です。
 
-木の機能のみ、Version 1から利用可能です。
+この機能のみ、Version 1から利用可能です。
 
 ## Versionの読み込み
 `deviceVersionRead()`

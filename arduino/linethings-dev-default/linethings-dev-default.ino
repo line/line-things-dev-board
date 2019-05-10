@@ -1129,7 +1129,8 @@ void bleJsControl(){
 
   //Notify SW
   if((g_flag_sw1 || g_flag_sw2)/* && Bluefruit.connected()*/){
-    byte notify[2] = {g_data_sw1, g_data_sw2};
+
+    byte notify[2] = {0, (g_data_sw1 << 1) + g_data_sw2};
     debugPrint("SW Event");
     blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
     g_flag_sw1 = 0;

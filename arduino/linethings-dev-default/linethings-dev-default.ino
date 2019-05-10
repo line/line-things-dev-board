@@ -30,7 +30,7 @@
 
 // BLE Service UUID
 #define USER_SERVICE_UUID "f2b742dc-35e3-4e55-9def-0ce4a209c552"
-#define USER_CHARACTERISTIC_READ_UUID "e90b4b4e-f18a-44f0-8691-b041c7fe57f2"
+#define USER_CHARACTERISTIC_NOTIFY_UUID "e90b4b4e-f18a-44f0-8691-b041c7fe57f2"
 #define USER_CHARACTERISTIC_WRITE_UUID "4f2596d7-b3d6-4102-85a2-947b80ab4c6f"
 #define USER_CHARACTERISTIC_VERSION_UUID "be25a3fe-92cd-41af-aeee-0a9097570815"
 #define USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID "a11bd5c0-e7da-4015-869b-d5c0087d3cc4"
@@ -163,7 +163,7 @@ void bleConfigure(int power) {
   strUUID2Bytes(PSDI_SERVICE_UUID, blesv_line_uuid);
   strUUID2Bytes(PSDI_CHARACTERISTIC_UUID, blesv_line_product_uuid);
   strUUID2Bytes(USER_SERVICE_UUID, blesv_devboard_uuid);
-  strUUID2Bytes(USER_CHARACTERISTIC_READ_UUID, blesv_devboard_notify_uuid);
+  strUUID2Bytes(USER_CHARACTERISTIC_NOTIFY_UUID, blesv_devboard_notify_uuid);
   strUUID2Bytes(USER_CHARACTERISTIC_WRITE_UUID, blesv_devboard_write_uuid);
   strUUID2Bytes(USER_CHARACTERISTIC_VERSION_UUID, blesv_devboard_version_uuid);
   strUUID2Bytes(USER_CHARACTERISTIC_IO_READ_UUID, blesv_devboard_io_read_uuid);

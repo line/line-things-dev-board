@@ -65,6 +65,8 @@ LINE Things上でモーターを除くすべてのデバイスの状態を取得
 デバイスの電源を入れ、LINE App の LINE Things から接続することで、 Notify や デバイスへの Write を試すことができます。
 初期状態のファームウェアは出力パワーを最低に設定しています。端末をデバイスに近づけて利用してください。
 
+デフォルトファームウェアで使用しているUUIDの詳細に関しては[デフォルトファームウェアとLIFFの改良](#デフォルトファームウェアとLIFFの改良)を参照してください。
+
 ファームウェアを書き換えることなく、LIFFからLINEデバイスの挙動をより高度にコントロールする機能も用意しています。
 この機能を用いると、例えば任意のタイミングでデバイスからNotifyさせたり、各種センサの値を任意に設定したり、取得することが可能です。
 これらの使い方は[Java Scriptからデバイスをより高度にコントロールする方法](https://line.github.io/line-things-dev-board/liff-app/js-control/)を参照してください。
@@ -726,6 +728,31 @@ DRV8830DGQRは裏のGNDパッドを基板の裏側からハンダを流しては
 
 - http://eleshop.jp/shop/g/g6CM128/
 - http://akizukidenshi.com/catalog/g/gP-02670/
+
+## デフォルトファームウェアとLIFFの改良
+使用しているUUID一覧は図の通りです。
+
+|説明 | Firmware側 | LIFF側名称 | UUID | 使用先 |
+----|----|----|----|----
+| 1 | USER_SERVICE_UUID | USER_SERVICE_UUID | f2b742dc-35e3-4e55-9def-0ce4a209c552 |  |
+| 2 | USER_CHARACTERISTIC_NOTIFY_UUID | USER_CHARACTERISTIC_NOTIFY_UUID | e90b4b4e-f18a-44f0-8691-b041c7fe57f2 | liff-app/linethings-dev-default/ |
+| 3 | USER_CHARACTERISTIC_WRITE_UUID | USER_CHARACTERISTIC_WRITE_UUID | 4f2596d7-b3d6-4102-85a2-947b80ab4c6f | liff-app/linethings-dev-default/, liff-app/js-control/ |
+| 4 | USER_CHARACTERISTIC_VERSION_UUID | USER_CHARACTERISTIC_VERSION_UUID | be25a3fe-92cd-41af-aeee-0a9097570815 | liff-app/js-control/ |
+| 5 | USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID | USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID | a11bd5c0-e7da-4015-869b-d5c0087d3cc4 | liff-app/js-control/ |
+| 6 | USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID | USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID | fe9b11a8-5f98-40d6-ae82-bea94816277f | liff-app/js-control/ |
+| 7 | USER_CHARACTERISTIC_IO_READ_UUID | USER_CHARACTERISTIC_IO_READ_UUID | 1737f2f4-c3d3-453b-a1a6-9efe69cc944f | liff-app/js-control/ |
+| 8 | USER_CHARACTERISTIC_IO_WRITE_UUID | USER_CHARACTERISTIC_IO_WRITE_UUID | 5136e866-d081-47d3-aabc-a2c9518bacd4 | liff-app/js-control/ |
+
+
+1. Dev boardのService UUID。
+2. デバイス上のスイッチ、温度、加速度などの情報を定期的にnotifyしています。
+3. LIFF上からのUUIDの書き換えと、`liff-app/linethings-dev-default/`からはデバイスのLEDやブザーの制御を行います。
+4. Firmwareのバージョンを示すキャラクタリスティックです。
+5. LIFFから指定された任意の設定でスイッチのNotifyを行います。
+6. LIFFから指定された任意の設定で温度のNotifyを行います。
+7. LIFFから指定された任意のタイミングでスイッチやIO、加速度、温度などの値を読み込みます。
+8. LIFFから任意のタイミングでデバイスへ値を書き込みます。
+
 
 ---
 

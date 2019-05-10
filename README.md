@@ -67,7 +67,7 @@ LINE Things上でモーターを除くすべてのデバイスの状態を取得
 
 ファームウェアを書き換えることなく、LIFFからLINEデバイスの挙動をより高度にコントロールする機能も用意しています。
 この機能を用いると、例えば任意のタイミングでデバイスからNotifyさせたり、各種センサの値を任意に設定したり、取得することが可能です。
-これらの使い方は[Java Scriptからデバイスをより高度にコントロールする方法](https://github.com/cpulabs/line-things-dev-board-1/blob/master/liff-app/js-control/README.md)を参照してください。
+これらの使い方は[Java Scriptからデバイスをより高度にコントロールする方法](https://line.github.io/line-things-dev-board/liff-app/js-control/)を参照してください。
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。
 この機能は LINE Developers から Service UUID を取得して、LINE Things developers trial の独自デバイスを構築する際に、

@@ -55,7 +55,6 @@
             <div class="nav nav-tabs col" role="tablist">
               <a class="nav-item nav-link small active" id="nav-write-tab" data-toggle="tab" href="#nav-write" role="tab" aria-controls="nav-write" aria-selected="true">Write</a>
               <a class="nav-item nav-link small" id="nav-read-tab" data-toggle="tab" href="#nav-read" role="tab" aria-controls="nav-read" aria-selected="true">Read</a>
-              <a class="nav-item nav-link small" id="nav-advert-tab" data-toggle="tab" href="#nav-advert" role="tab" aria-controls="nav-advert" aria-selected="true">Write advertising packet</a>
             </div>
           </nav>
 
@@ -69,21 +68,7 @@
               <p>none</p>
             </div>
 
-            <div class="tab-pane fade col" id="nav-advert" role="tabpanel" aria-labelledby="nav-advert-tab">
-              <div class="row justify-content-center">
-                <div class="col text-center">
-                  <p>
-                    <label for="uuid">Advertising UUID</label>
-                    <input type="" class="form-control uuid_text" id="uuidtext" placeholder="UUID">
-                    <small class="text-muted">Advertisingで使うUUIDを変更します。間違ったUUIDを書き込んでしまうとLINE Appから見れなくなってしまうことがあるので注意してください。
-                    書き込みしたあとにデバイスのリセットボタンを押して再起動することで反映されます。LIFFアプリも一度閉じてから再度開いてください。初期化したい場合はSW1を押しながらリセットスイッチを押すことでデフォルトのUUIDに戻ります。</small>
-                  </p>
-                  <p>
-                    <button type="button" class="setuuid btn btn-secondary"><i class="fas fa-sync-alt"></i> Write UUID</button>
-                  </p>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

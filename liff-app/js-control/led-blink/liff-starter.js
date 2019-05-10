@@ -1,4 +1,4 @@
-const USER_SERVICE_UUID = "f2b742dc-35e3-4e55-9def-0ce4a209c552";
+const USER_SERVICE_UUID = "981b0d79-2855-44f4-aa14-3c34012a3dd3";
 const USER_CHARACTERISTIC_NOTIFY_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
 const USER_CHARACTERISTIC_WRITE_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
 const USER_CHARACTERISTIC_IO_WRITE_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
@@ -138,7 +138,7 @@ function connectDevice(device) {
             );
 
             setup(things);
-            //loop(things);
+            loop(things);
         }).catch(e => {
             flashSDKError(e);
             onScreenLog(`ERROR on gatt.connect(${device.id}): ${e}`);
@@ -150,14 +150,9 @@ function connectDevice(device) {
 
 // Device initialize
 async function setup(things){
-    // Enter to BLE-IO mode
-    await things.enterBleioMode().catch(e => `do not support JS-control mode. please update firmware`);
-    await sleep(1000);
-
-    // Clear display text, ane write new message
-    await things.displayClear();
-    await things.displayControl(0, 0);
-    await things.displayWrite("Hello world");
+    await things.displayClear().catch(e => onScreenLog(`display clear error`));
+    await things.displayControl(0, 0).catch(e => onScreenLog(`display control error`));
+    await things.displayWrite("Hello world").catch(e => onScreenLog(`display write error`));
 
     // Initial LED
     await things.ledWrite(2, 1).catch(e => `error: ${e}\n${e.stack}`);
@@ -169,9 +164,9 @@ async function setup(things){
 async function loop(things){
     while(true){
         // Write LED
-        await things.ledWriteByte(0);
+        await things.ledWriteByte(0).catch(e => `error: ${e}\n${e.stack}`);
         await sleep(1000);
-        await things.ledWriteByte(0xff);
+        await things.ledWriteByte(0xff).catch(e => `error: ${e}\n${e.stack}`);
         await sleep(1000);
     }
 }
@@ -195,14 +190,8 @@ function initializeCardForDevice(device) {
         USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
     );
 
-    template.querySelector('.setuuid').addEventListener('click', () => {
-        thingsUuid.writeAdvertuuid(
-            template.querySelector('.uuid_text').value
-        ).catch(e => onScreenLog(`ERROR on writeAdvertuuid(): ${e}\n${e.stack}`));
-    });
-
     // Tabs
-    ['write', 'read', 'advert'].map(key => {
+    ['write', 'read'].map(key => {
         const tab = template.querySelector(`#nav-${key}-tab`);
         const nav = template.querySelector(`#nav-${key}`);
 

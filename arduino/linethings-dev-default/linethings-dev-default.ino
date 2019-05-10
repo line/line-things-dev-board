@@ -306,6 +306,8 @@ void bleWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data, 
   byte hash = data[3];
   int i = 0;
 
+  Serial.println("UUID Change ");
+
   if (cmd == 0) {
     // Write peripheral device and GPIO
     g_data_user_write_led0 = (data[19] >> 7) & 1;
@@ -1064,6 +1066,9 @@ void bleJsControl(){
         mode = LOW;
         break;
     }
+
+    detachInterrupt(SW1);
+    detachInterrupt(SW2);
 
     if(g_notify_sw.source && 1){
       attachInterrupt(SW1, sw1ChangedEvent, mode);

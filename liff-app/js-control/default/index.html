@@ -51,28 +51,13 @@
             <div class="nav nav-tabs col" role="tablist">
               <a class="nav-item nav-link small active" id="nav-write-tab" data-toggle="tab" href="#nav-write" role="tab" aria-controls="nav-write" aria-selected="true">Write</a>
               <a class="nav-item nav-link small" id="nav-read-tab" data-toggle="tab" href="#nav-read" role="tab" aria-controls="nav-read" aria-selected="true">Read</a>
+              <a class="nav-item nav-link small" id="nav-notify-tab" data-toggle="tab" href="#nav-notify" role="tab" aria-controls="nav-notify" aria-selected="true">Notify</a>
+              <a class="nav-item nav-link small" id="nav-advert-tab" data-toggle="tab" href="#nav-advert" role="tab" aria-controls="nav-advert" aria-selected="true">Service UUID</a>
             </div>
           </nav>
           <div class="tab-content row my-2">
             <div class="tab-pane fade col show active" id="nav-write" role="tabpanel" aria-labelledby="nav-write-tab">
               <div class="row justify-content-center">
-                <div class="card" style="width: 20rem;">
-                  <div class="card-header">
-                    Mode select
-                  </div>
-                  <div class="card-body text-center">
-                    <p>
-                      <select class="mode-select form-control" id="modeselect" name="modeselect">
-                        <option value="0" selected="selected">default</option>
-                        <option value="1">IO Control</option>
-                      </select>
-                      <button type="button" class="mode-write btn btn-primary"><i class="fas fa-refresh"></i> Mode Write </button>
-                    </p>
-                  </div>
-                  <div class="card-footer">
-                    JS Frameworkを使用する場合ははじめにここで"IO Control"モードに設定してください。
-                  </div>
-                </div>
                 <div class="card" style="width: 20rem;">
                   <div class="card-header">
                     Display
@@ -314,6 +299,90 @@
                     <p>
                       <p class="text-white bg-dark result-data-view"></p>
                     </p>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade col" id="nav-notify" role="tabpanel" aria-labelledby="nav-notify-tab">
+              <div class="card" style="width: 20rem;">
+                <div class="card-header">
+                  SW Notify
+                </div>
+                <div class="card-body text-center">
+                  <p>
+                    <div style="display:inline-flex">
+                      <select class="notify-sw-source form-control text-center" id="notifyswsource" name="notifyswsource">
+                        <option value="0" selected="selected">-Select source-</option>
+                        <option value="1">SW1</option>
+                        <option value="2">SW2</option>
+                        <option value="3">SW1 or SW2</option>
+                      </select>
+
+                      <select class="notify-sw-mode form-control text-center" id="notifyswmode" name="notifyswmode">
+                        <option value="-1" selected="selected">-Select mode-</option>
+                        <option value="0">Low</option>
+                        <option value="1">Change</option>
+                        <option value="2">Rising</option>
+                        <option value="3">Falling</option>
+                      </select>
+                    </div>
+
+                    <input type="" class="form-control notify-sw-interval" id="notifyswinterval" placeholder="Interval">
+                    <small class="text-muted">Intervalは1 ~ 65535 (1ms ~ 65535ms) で入力してください。</small>
+                    <p>
+                      <div class="col text-center">
+                        <button type="button" class="notify-sw-enable btn btn-primary"><i class="fas fa-refresh"></i> Notify Enable </button>
+                      </div>
+                    </p>
+                    <p>
+                      <div class="col text-center">
+                        <button type="button" class="notify-sw-disable btn btn-primary"><i class="fas fa-refresh"></i> Notify Disable </button>
+                      </div>
+                    </p>
+                  </p>
+                </div>
+              </div>
+
+
+
+              <div class="card" style="width: 20rem;">
+                <div class="card-header">
+                  Temperature Notify
+                </div>
+                <div class="card-body text-center">
+                  <p>
+
+                    <input type="" class="form-control notify-temp-interval" id="notifytempinterval" placeholder="Interval">
+                    <small class="text-muted">Intervalは500 ~ 65535 (500ms ~ 65535ms) で入力してください。</small>
+                    <p>
+                      <div class="col text-center">
+                        <button type="button" class="notify-temp-enable btn btn-primary"><i class="fas fa-refresh"></i> Notify Enable </button>
+                      </div>
+                    </p>
+                    <p>
+                      <div class="col text-center">
+                        <button type="button" class="notify-temp-disable btn btn-primary"><i class="fas fa-refresh"></i> Notify Disable </button>
+                      </div>
+                    </p>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="tab-pane fade col" id="nav-advert" role="tabpanel" aria-labelledby="nav-advert-tab">
+              <div class="row justify-content-center">
+                <div class="col text-center">
+                  <p>
+                    <label for="uuid">Advertising UUID</label>
+                    <input type="" class="form-control uuid_text" id="uuidtext" placeholder="UUID">
+                    <small class="text-muted">Advertisingで使うUUIDを変更します。間違ったUUIDを書き込んでしまうとLINE Appから見れなくなってしまうことがあるので注意してください。
+                    書き込みしたあとにデバイスのリセットボタンを押して再起動することで反映されます。LIFFアプリも一度閉じてから再度開いてください。初期化したい場合はSW1を押しながらリセットスイッチを押すことでデフォルトのUUIDに戻ります。</small>
+                  </p>
+                  <p>
+                    <button type="button" class="setuuid btn btn-secondary"><i class="fas fa-sync-alt"></i> Write UUID</button>
                   </p>
                 </div>
               </div>

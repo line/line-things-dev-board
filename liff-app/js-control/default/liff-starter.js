@@ -1,4 +1,4 @@
-const USER_SERVICE_UUID = "f2b742dc-35e3-4e55-9def-0ce4a209c552";
+const USER_SERVICE_UUID = "981b0d79-2855-44f4-aa14-3c34012a3dd3";
 const USER_CHARACTERISTIC_NOTIFY_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
 const USER_CHARACTERISTIC_WRITE_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
 const USER_CHARACTERISTIC_IO_WRITE_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
@@ -160,14 +160,6 @@ function initializeCardForDevice(device) {
         device.gatt.disconnect();
     });
 
-    template.querySelector('.mode-write').addEventListener('click', () => {
-        if(template.querySelector('.mode-select').value == "0"){
-            things.enterDemoMode().catch(e => onScreenLog(`ERROR enter to Demo mode: ${e}\n${e.stack}`));
-        }else{
-            things.enterBleioMode().catch(e => onScreenLog(`ERROR enter to BLE IO mode: ${e}\n${e.stack}`));
-        }
-    });
-
     template.querySelector('.device-read').addEventListener('click', () => {
         let valueBuffer = things.deviceRead().catch(e => `ERROR on deviceRead(): ${e}\n${e.stack}`);
         getDeviceReadData(device).innerText = String(things.valueRead());
@@ -274,8 +266,40 @@ function initializeCardForDevice(device) {
         ).catch(e => `ERROR on readReq(): ${e}\n${e.stack}`);
     });
 
+    template.querySelector('.setuuid').addEventListener('click', () => {
+        onScreenLog(`Write new Service UUID`);
+        things.writeAdvertUuid(
+            template.querySelector('.uuid_text').value
+        ).catch(e => onScreenLog(`ERROR on writeAdvertuuid(): ${e}\n${e.stack}`));
+    });
+
+    template.querySelector('.notify-sw-enable').addEventListener('click', () => {
+        things.swNotifyEnable(
+            parseInt(template.querySelector('.notify-sw-source').value, 16),    //Select Switch
+            parseInt(template.querySelector('.notify-sw-mode').value, 16),    //mode
+            parseInt(template.querySelector('.notify-sw-interval').value, 16),  //Interval
+            notificationSwCallback    //callback
+        ).catch(e => onScreenLog(`SW Notify set error`));
+    });
+
+
+    template.querySelector('.notify-temp-enable').addEventListener('click', () => {
+        things.tempNotifyEnable(
+            parseInt(template.querySelector('.notify-temp-interval').value, 16),  //Interval
+            notificationTempCallback    //callback
+        ).catch(e => onScreenLog(`Temperature Notify set error`));
+    });
+
+    template.querySelector('.notify-sw-disable').addEventListener('click', () => {
+        things.swNotifyDisable().catch(e => onScreenLog(`SW Notify disable error`));
+    });
+
+    template.querySelector('.notify-temp-disable').addEventListener('click', () => {
+        things.tempNotifyDisable().catch(e => onScreenLog(`Temperature Notify disable error`));
+    });
+
     // Tabs
-    ['write', 'read'].map(key => {
+    ['write', 'read', 'notify', 'advert'].map(key => {
         const tab = template.querySelector(`#nav-${key}-tab`);
         const nav = template.querySelector(`#nav-${key}`);
 
@@ -295,6 +319,16 @@ function initializeCardForDevice(device) {
 
     document.getElementById('device-cards').appendChild(template);
     onScreenLog('Device card initialized: ' + device.name);
+}
+
+function notificationSwCallback(e) {
+    const dataBuffer = new DataView(e.target.value.buffer);
+    onScreenLog(`Notify SW ${e.target.uuid}: ${buf2hex(e.target.value.buffer)}`);
+}
+
+function notificationTempCallback(e) {
+    const dataBuffer = new DataView(e.target.value.buffer);
+    onScreenLog(`Notify Temperature : ` + String(((dataBuffer.getInt8(0) << 8) +  dataBuffer.getInt8(1)) / 100));
 }
 
 // Update Connection Status

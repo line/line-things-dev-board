@@ -134,7 +134,6 @@ function connectDevice(device) {
                 USER_CHARACTERISTIC_IO_NOTIFY_SW_UUID,
                 USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
             );
-
             setup(things);
         }).catch(e => {
             flashSDKError(e);
@@ -157,12 +156,12 @@ function notificationTempCallback(e) {
 
 // Device initialize
 async function setup(things){
-    await things.displayClear();
-    await things.displayControl(0, 0);
-    await things.displayWrite("Hello world");
+    await things.displayClear().catch(e => onScreenLog(`display clear error`));
+    await things.displayControl(0, 0).catch(e => onScreenLog(`display control error`));
+    await things.displayWrite("Hello world").catch(e => onScreenLog(`display write error`));
 
     // Initial LED
-    await things.ledWriteByte(0xff).catch(e => onScreenLog(`LED write error`));
+    await things.ledWriteByte(0xff).catch(e => onScreenLog(`LED write error`)).catch(e => onScreenLog(`led write error`));
 
     //Enable Notify
     await things.swNotifyEnable(3, 1, 100, notificationSwCallback).catch(e => onScreenLog(`SW Notify set error`));
@@ -188,14 +187,8 @@ function initializeCardForDevice(device) {
         USER_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
     );
 
-    template.querySelector('.setuuid').addEventListener('click', () => {
-        thingsUuid.writeAdvertuuid(
-            template.querySelector('.uuid_text').value
-        ).catch(e => onScreenLog(`ERROR on writeAdvertuuid(): ${e}\n${e.stack}`));
-    });
-
     // Tabs
-    ['write', 'read', 'advert'].map(key => {
+    ['write', 'read'].map(key => {
         const tab = template.querySelector(`#nav-${key}-tab`);
         const nav = template.querySelector(`#nav-${key}`);
 

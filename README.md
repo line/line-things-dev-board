@@ -71,7 +71,11 @@ LINE Things上でモーターを除くすべてのデバイスの状態を取得
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。
 この機能は LINE Developers から Service UUID を取得して、LINE Things developers trial の独自デバイスを構築する際に、
-ファームウェアと LIFF を変更することなく独自のデバイスとして使用することを目的とした機能です。よくわからない方はこの機能を使用してないでください。
+ファームウェアと LIFF を変更することなく独自のデバイスとして使用することを目的とした機能です。詳しい使い方は
+[LIFFからService UUIDを書き換える](#liffからservice uuidを書き換える)
+と、
+[Service UUIDを初期状態に戻す](#service uuidを初期状態に戻す)
+を参照してください。
 
 このファームウェアは予め書き込まれていますが、書き換えたい場合などは `arduino/linethings-dev-default/linethings-dev-default.ino` を使用してください。
 このサンプルでは `things_temp_lib`、`SparkFun MMA8452Q Accelerometer`、`Adafruit SSD1306`、`Adafruit GFX Library` を使用しています。`things_temp_lib` は `library/things_temp_lib` をzipファイルに圧縮して、ライブラリをインクルードからインストールしてください。それ以外のライブラリはライブラリを管理からインストールしてください。
@@ -725,6 +729,24 @@ DRV8830DGQRは裏のGNDパッドを基板の裏側からハンダを流しては
 
 - http://eleshop.jp/shop/g/g6CM128/
 - http://akizukidenshi.com/catalog/g/gP-02670/
+
+---
+
+# LIFFからService UUIDの変更と初期化
+サンプルのファームウェア (linethings-dev-default) では、LIFF上からService UUIDを書き換えることが可能です。
+この機能を用いると、Service UUIDの書換の際にデバイスのファームウェアの書き換えが不要となります。
+
+## LIFFからService UUIDを書き換える
+LINE AppからデフォルトのLIFFを開き、Write advertising packetタブを表示します。
+設定したいService UUIDをテキストボックスに入れて書き換えボタンを押すと、
+Dev boardのディスプレイに「BLE advertising uuid changed from LIFF....」 と表示されていれば成功です。
+
+ディスプレイにこのメッセージが出ていることを確認して、 **LINE AppのLINE Thingsを閉じて、dev boardのリセットボタンを押して** ください。
+
+
+## Service UUIDを初期状態に戻す
+電源が入っている状態で、マザーボード上のSW1タクトスイッチを押しながら、CPUボード上のリセットボタンを押してください。
+起動時に `Set advertising packet UUID to default.` とディスプレイに表示されたら成功です。
 
 ---
 

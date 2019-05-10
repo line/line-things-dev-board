@@ -71,7 +71,8 @@ LINE Things上でモーターを除くすべてのデバイスの状態を取得
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。
 この機能は LINE Developers から Service UUID を取得して、LINE Things developers trial の独自デバイスを構築する際に、
-ファームウェアと LIFF を変更することなく独自のデバイスとして使用することを目的とした機能です。詳しい使い方は[LIFFからService UUIDを書き換える](#liffからservice uuidを書き換える)と、[Service UUIDを初期状態に戻す](#service uuidを初期状態に戻す)を参照してください。
+ファームウェアと LIFF を変更することなく独自のデバイスとして使用することを目的とした機能です。
+詳しい使い方は[LIFFからService UUIDを書き換える](#liffからservice-uuidを書き換える)と、[Service UUIDを初期状態に戻す](#service-uuidを初期状態に戻す)を参照してください。
 
 このファームウェアは予め書き込まれていますが、書き換えたい場合などは `arduino/linethings-dev-default/linethings-dev-default.ino` を使用してください。
 このサンプルでは `things_temp_lib`、`SparkFun MMA8452Q Accelerometer`、`Adafruit SSD1306`、`Adafruit GFX Library` を使用しています。`things_temp_lib` は `library/things_temp_lib` をzipファイルに圧縮して、ライブラリをインクルードからインストールしてください。それ以外のライブラリはライブラリを管理からインストールしてください。
@@ -781,6 +782,12 @@ DRV8830DGQRの裏側のGNDパッドがはんだ付けされていない可能性
 ## Arduinoでサンプルファイルのコンパイルが通らない
 Arduino の `Tools -> Board menu` から **Boards Manager** を開いて、"nRF52" と検索して、**Adafruit nRF52 by Adafruit** を見つけます。
 インストールされているバージョンが **0.10.1** より古い場合は、アップデートしてください。
+
+## デフォルトファームウェアのUUIDを変更して書き込んだが古いUUIDのまま変わらない
+デフォルトサンプルファームウェアではUUIDを内蔵Flashに記憶しています。ファームウェア上で変更したUUIDを反映させるには、ファームウェアを書き込んだあとにUUIDの初期化を行い、
+Flash上に記載されたUUIDを上書きをする必要があります。
+
+[Service UUIDを初期状態に戻す](#service-uuidを初期状態に戻す)を参照して行ってください。
 
 ---
 

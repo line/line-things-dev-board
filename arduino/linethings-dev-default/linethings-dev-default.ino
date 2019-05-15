@@ -406,6 +406,7 @@ volatile bleNotifyAction g_notify_sw;
 volatile bleNotifyAction g_notify_temp;
 
 volatile int g_js_control_mode = 0;
+volatile int g_js_control_display = 0;
 
 /**
  * Write to device format
@@ -482,11 +483,13 @@ void bleIoWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data
   g_js_control_mode = 1;
   switch(cmd){
     case 0 :
+      g_js_control_display = 1;
       g_display.changed = 1;
       g_display.addr_x = data[16];
       g_display.addr_y = data[17];
       break;
     case 1:
+      g_js_control_display = 1;
       g_display_text.changed = 1;
       g_display_text.length = data[1];
       for(int i = 0; i < 16; i++){
@@ -494,6 +497,7 @@ void bleIoWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data
       }
       break;
     case 2:
+      g_js_control_display = 1;
       g_display_clear = 1;
       break;
     case 3 :
@@ -547,6 +551,7 @@ void bleIoWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data
       g_gpio_ar_port = data[17];
       break;
     case 15:
+      g_js_control_display = 1;
       g_display_fontsize = data[17];
       break;
     case 16:
@@ -1238,7 +1243,7 @@ void loop() {
     }
 
     // ディスプレイに表示(Default)
-    if(!g_js_control_mode){
+    if(!g_js_control_display){//!g_js_control_mode){
       if (g_flag_display) {
         display.clearDisplay();       // ディスプレイのバッファを初期化
         display.setTextSize(1);       // テキストサイズ 1

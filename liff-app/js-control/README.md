@@ -254,7 +254,7 @@ notifyされる16Byteの温度データは100倍されたものが送信され�
 |Temperature|温度が100倍された値 |
 |GPIO Digital| {0, 0, 0, value} |
 |GPIO Analog| {0, 0, 0, value}|
-|I2C| {0, 0, (0:invalid, 1:valid), value} |
+|I2C| {0, 0, (0:invalid / 1:valid), value} |
 
 ## DEFAULT_CHARACTERISTIC_IO_WRITE_UUID (デバイス操作)
 ボード上のデバイスの設定や、Notifyの設定などを行います。

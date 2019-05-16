@@ -1,3 +1,11 @@
+/**
+* Advanced IO Control
+*    All most devices on the dev board and all IOs can be controlled from this LIFF.
+*    (Not required to changing the firmware)
+*    Used in combination with default firmware in /arduino/linethings-dev-default/linethings-dev-default.ino of repository.
+*    See here for details.
+*    https://line.github.io/line-things-dev-board/liff-app/js-control/
+*/
 
 class ThingsIo {
     constructor(device, svUuid, versionUuid, writeUuid, writeIoUuid, readIoUuid, notifySwUuid, notifyTempUuid) {

@@ -10,20 +10,19 @@
   <link rel="stylesheet" href="style.css?id=20190111_1547196772">
   <title>JS-Framework Default</title>
 </head>
+
 <body>
   <div id="alert-liffble-notavailable" class="container-fluid my-2" style="display:none;">
     <div class="alert alert-danger lead py-5" role="alert">
       <i class="fas fa-exclamation-triangle"></i> BLE feature is not available.
     </div>
   </div>
-
   <div class="mb-2">
     <div id="device-list" class="list-group">
       <button type="button" class="list-group-item disabled font-weight-bold">
         <i class='fa fa-spinner fa-spin mr-2'></i> Finding development board
       </button>
-      <button type="button" id="device-list-item"
-        class="list-group-item list-group-item-action justify-content-between align-items-center d-none">
+      <button type="button" id="device-list-item" class="list-group-item list-group-item-action justify-content-between align-items-center d-none">
         <span><i class="fas fa-microchip"></i></span>
         <span>
           <strong class="device-name">Test Device</strong><br>
@@ -33,7 +32,6 @@
       </button>
     </div>
   </div>
-
   <div id="device-cards" class="">
     <div id="device-template" class="my-2" style="display:none;">
       <div class="card">
@@ -89,8 +87,6 @@
                     </p>
                   </div>
                 </div>
-
-
                 <div class="card" style="width: 20rem;">
                   <div class="card-header">
                     LED
@@ -113,7 +109,6 @@
                     <button type="button" class="led-write btn btn-primary"><i class="fas fa-refresh"></i> LED Write </button>
                   </div>
                 </div>
-
                 <div class="card" style="width: 20rem;">
                   <div class="card-header">
                     Buzzer
@@ -127,8 +122,6 @@
                     <button type="button" class="buzzer-write btn btn-primary"><i class="fas fa-refresh"></i> Write </button>
                   </div>
                 </div>
-
-
                 <div class="card" style="width: 20rem;">
                   <div class="card-header">
                     GPIO
@@ -156,7 +149,6 @@
                       </div>
                       <button type="button" class="gpio-direction btn btn-primary"><i class="fas fa-refresh"></i> Write GPIO direction </button>
                     </p>
-
                     <p>
                       <div style="display:inline-flex">
                         <select class="gpio-digitalwrite-port form-control" id="gpiodigitalwriteport" name="gpiodigitalwriteport">
@@ -179,8 +171,6 @@
                       </div>
                       <button type="button" class="gpio-dwrite btn btn-primary"><i class="fas fa-refresh"></i> Write GPIO digital value </button>
                     </p>
-
-
                     <p>
                       <div style="display:inline-flex">
                         <select class="gpio-awrite-port form-control" id="gpioawriteport">
@@ -204,7 +194,6 @@
                       </div>
                       <button type="button" class="gpio-awrite btn btn-primary"><i class="fas fa-refresh"></i> Write GPIO analog value </button>
                     </p>
-
                     <p>
                       <select class="gpio-dreadreq-port form-control" id="gpiodreadreqport">
                         <option value="0" selected="selected">-Port-</option>
@@ -220,7 +209,6 @@
                       </select>
                       <button type="button" class="gpio-dreadreq btn btn-primary"><i class="fas fa-refresh"></i> Digital Read req </button>
                     </p>
-
                     <p>
                       <select class="gpio-areadreq-port form-control" id="gpioareadreqport">
                         <option value="0" selected="selected">-Port-</option>
@@ -238,8 +226,6 @@
                     </p>
                   </div>
                 </div>
-
-
                 <div class="card" style="width: 20rem;">
                   <div class="card-header">
                     I2C
@@ -270,9 +256,7 @@
                   </div>
                 </div>
               </div>
-
             </div>
-
             <div class="tab-pane fade col" id="nav-read" role="tabpanel" aria-labelledby="nav-read-tab">
               <div class="card" style="width: 20rem;">
                 <div class="card-header">
@@ -303,7 +287,6 @@
                 </div>
               </div>
             </div>
-
             <div class="tab-pane fade col" id="nav-notify" role="tabpanel" aria-labelledby="nav-notify-tab">
               <div class="card" style="width: 20rem;">
                 <div class="card-header">
@@ -318,7 +301,6 @@
                         <option value="2">SW2</option>
                         <option value="3">SW1 or SW2</option>
                       </select>
-
                       <select class="notify-sw-mode form-control text-center" id="notifyswmode" name="notifyswmode">
                         <option value="-1" selected="selected">-Select mode-</option>
                         <option value="0">Low</option>
@@ -327,7 +309,6 @@
                         <option value="3">Falling</option>
                       </select>
                     </div>
-
                     <input type="" class="form-control notify-sw-interval" id="notifyswinterval" placeholder="Interval">
                     <small class="text-muted">Intervalは1 ~ 65535 (1ms ~ 65535ms) で入力してください。</small>
                     <p>
@@ -343,16 +324,12 @@
                   </p>
                 </div>
               </div>
-
-
-
               <div class="card" style="width: 20rem;">
                 <div class="card-header">
                   Temperature Notify
                 </div>
                 <div class="card-body text-center">
                   <p>
-
                     <input type="" class="form-control notify-temp-interval" id="notifytempinterval" placeholder="Interval">
                     <small class="text-muted">Intervalは500 ~ 65535 (500ms ~ 65535ms) で入力してください。</small>
                     <p>
@@ -369,9 +346,6 @@
                 </div>
               </div>
             </div>
-
-
-
             <div class="tab-pane fade col" id="nav-advert" role="tabpanel" aria-labelledby="nav-advert-tab">
               <div class="row justify-content-center">
                 <div class="col text-center">
@@ -379,7 +353,7 @@
                     <label for="uuid">Advertising UUID</label>
                     <input type="" class="form-control uuid_text" id="uuidtext" placeholder="UUID">
                     <small class="text-muted">Advertisingで使うUUIDを変更します。間違ったUUIDを書き込んでしまうとLINE Appから見れなくなってしまうことがあるので注意してください。
-                    書き込みしたあとにデバイスのリセットボタンを押して再起動することで反映されます。LIFFアプリも一度閉じてから再度開いてください。初期化したい場合はSW1を押しながらリセットスイッチを押すことでデフォルトのUUIDに戻ります。</small>
+                      書き込みしたあとにデバイスのリセットボタンを押して再起動することで反映されます。LIFFアプリも一度閉じてから再度開いてください。初期化したい場合はSW1を押しながらリセットスイッチを押すことでデフォルトのUUIDに戻ります。</small>
                   </p>
                   <p>
                     <button type="button" class="setuuid btn btn-secondary"><i class="fas fa-sync-alt"></i> Write UUID</button>
@@ -392,11 +366,9 @@
       </div>
     </div>
   </div>
-
   <div id="log-panel" class="collapse my-2">
     <textarea id="logbox" rows="24" class="card-body form-control input-sm text-monospace p-2" readonly></textarea>
   </div>
-
   <footer class="footer">
     <div class="container-fluid my-2">
       <div class="row align-middle">
@@ -408,21 +380,16 @@
       </div>
     </div>
   </footer>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vConsole/3.2.0/vconsole.min.js"></script>
   <script>
     var vConsole = new VConsole();
   </script>
-
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
   <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
   <script src="../js-framework.js"></script>
-  <script src="liff-starter.js?id=20190111_1547196772"></script>
+  <script src="liff.js?id=20190111_1547196772"></script>
 </body>
-
-
-
 
 </html>

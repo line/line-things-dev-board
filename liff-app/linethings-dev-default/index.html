@@ -10,16 +10,12 @@
   <link rel="stylesheet" href="style.css?id=20190111_1547196772">
   <title>LINE Things development board</title>
 </head>
-
 <body>
-
-
   <div id="alert-liffble-notavailable" class="container-fluid my-2" style="display:none;">
     <div class="alert alert-danger lead py-5" role="alert">
       <i class="fas fa-exclamation-triangle"></i> BLE feature is not available.
     </div>
   </div>
-
   <div class="mb-2">
     <div id="device-list" class="list-group">
       <button type="button" class="list-group-item disabled font-weight-bold">
@@ -36,7 +32,6 @@
       </button>
     </div>
   </div>
-
   <div id="device-cards" class="">
     <div id="device-template" class="my-2" style="display:none;">
       <div class="card">
@@ -50,7 +45,6 @@
           </div>
         </div>
         <div class="card-body container" style="display:none;">
-
           <nav class="row">
             <div class="nav nav-tabs col" role="tablist">
               <a class="nav-item nav-link small active" id="nav-notify-tab" data-toggle="tab" href="#nav-notify" role="tab" aria-controls="nav-notify" aria-selected="true">Notify</a>
@@ -58,14 +52,8 @@
               <a class="nav-item nav-link small" id="nav-advert-tab" data-toggle="tab" href="#nav-advert" role="tab" aria-controls="nav-advert" aria-selected="true">Write advertising packet</a>
             </div>
           </nav>
-
-
-
           <div class="tab-content row my-2">
-
-
             <div class="tab-pane fade col show active" id="nav-notify" role="tabpanel" aria-labelledby="nav-notify-tab">
-
               <div class="d-flex align-items-center justify-content-between text-center mb-3">
                 <div class="w-25">
                   <i class="fas fa-thermometer-half"></i>
@@ -74,7 +62,6 @@
                   ---
                 </div>
               </div>
-
               <div class="d-flex align-items-center justify-content-between text-center mb-3">
                 <div class="w-25 lead">
                   X
@@ -105,7 +92,6 @@
                   </div>
                 </div>
               </div>
-
               <div class="d-flex align-items-center justify-content-between text-center mb-3">
                 <div class="w-25">
                   <i class="fas toggle-on">SW1</i>
@@ -114,7 +100,6 @@
                   ---
                 </div>
               </div>
-
               <div class="d-flex align-items-center justify-content-between text-center mb-3">
                 <div class="w-25">
                   <i class="fas toggle-on">SW2</i>
@@ -123,17 +108,13 @@
                   ---
                 </div>
               </div>
-
               <div class="row justify-content-center">
                 <div class="col text-center">
                   <button type="button" class="notification-enable btn btn-secondary"><i class="fas fa-toggle-off"></i> Notify</button>
                 </div>
               </div>
-
             </div>
-
             <div class="tab-pane fade col" id="nav-write" role="tabpanel" aria-labelledby="nav-write-tab">
-
               <div class="d-flex align-items-center justify-content-between text-center mb-1">
                 <div class="w-25">
                   LED2
@@ -350,7 +331,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
   <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
-  <script src="liff-starter.js?id=20190111_1547196772"></script>
+  <script src="liff.js?id=20190111_1547196772"></script>
 </body>
 
 </html>

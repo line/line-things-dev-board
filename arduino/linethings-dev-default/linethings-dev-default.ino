@@ -1,17 +1,17 @@
 /**
-* Default firmware for LINE Things development board
-* This firmware suppoted 2 type of operation.
-* - Default mode
-*    In this mode can test of the overview of the LINE Things dev board.
-*    Used in combination with LIFF in /liff-app/linethings-dev-default of repository.
-*
-* - LIFF Control mode (Enable after write to BOARD_CHARACTERISTIC_IO_WRITE_UUID)
-*    In this mode, all most devices on the dev board and all IOs can be controlled from the LIFF side.
-*    (Not required to changing the firmware)
-*    Used in combination with LIFF in /liff-app/js-control of repository.
-*    See here for details.
-*    https://line.github.io/line-things-dev-board/liff-app/js-control/
-*/
+ * Default firmware for LINE Things development board
+ * This firmware suppoted 2 type of operation.
+ * - Demo mode (NOTIFY_BOARD_STATE_CHARACTERISTIC, WRITE_BOARD_STATE_CHARACTERISTIC)
+ *    In this mode, you can get or set whole board state of the LINE Things dev board at once.
+ *    Used in combination with LIFF in /liff-app/linethings-dev-default of repository.
+ *
+ * - Command control mode / Notify switch, temperature state
+ *    In this mode, all sensors and individual GPIOs can be controlled from command characteristic.
+ *    Easy to hack dev board from LIFF and automatic communication scenario without firmware changes.
+ *    Used in combination with Javascript library for LIFF in /liff-app/js-control of repository.
+ *    See here for details.
+ *    https://line.github.io/line-things-dev-board/liff-app/js-control/
+ */
 
 #include <bluefruit.h>
 #include <Bluefruit_FileIO.h>
@@ -26,20 +26,20 @@
 // BLE Default Advertising UUID
 #define DEFAULT_ADVERTISE_UUID "f2b742dc-35e3-4e55-9def-0ce4a209c552"
 // BLE Service UUID
-#define BOARD_SERVICE_UUID "f2b742dc-35e3-4e55-9def-0ce4a209c552"
-#define BOARD_CHARACTERISTIC_NOTIFY_UUID "e90b4b4e-f18a-44f0-8691-b041c7fe57f2"
-#define BOARD_CHARACTERISTIC_WRITE_UUID "4f2596d7-b3d6-4102-85a2-947b80ab4c6f"
-#define BOARD_CHARACTERISTIC_VERSION_UUID "be25a3fe-92cd-41af-aeee-0a9097570815"
-#define BOARD_CHARACTERISTIC_IO_NOTIFY_SW_UUID "a11bd5c0-e7da-4015-869b-d5c0087d3cc4"
-#define BOARD_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID "fe9b11a8-5f98-40d6-ae82-bea94816277f"
-#define BOARD_CHARACTERISTIC_IO_READ_UUID "1737f2f4-c3d3-453b-a1a6-9efe69cc944f"
-#define BOARD_CHARACTERISTIC_IO_WRITE_UUID "5136e866-d081-47d3-aabc-a2c9518bacd4"
+#define DEVBOARD_SERVICE_UUID "f2b742dc-35e3-4e55-9def-0ce4a209c552"
+#define NOTIFY_BOARD_STATE_CHARACTERISTIC_UUID "e90b4b4e-f18a-44f0-8691-b041c7fe57f2"
+#define WRITE_BOARD_STATE_CHARACTERISTIC_UUID "4f2596d7-b3d6-4102-85a2-947b80ab4c6f"
+#define VERSION_CHARACTERISTIC_UUID "be25a3fe-92cd-41af-aeee-0a9097570815"
+#define COMMAND_WRITE_CHARACTERISTIC_UUID "5136e866-d081-47d3-aabc-a2c9518bacd4"
+#define COMMAND_RESPONSE_CHARACTERISTIC_UUID "1737f2f4-c3d3-453b-a1a6-9efe69cc944f"
+#define NOTIFY_SW_CHARACTERISTIC_UUID "a11bd5c0-e7da-4015-869b-d5c0087d3cc4"
+#define NOTIFY_TEMP_CHARACTERISTIC_UUID "fe9b11a8-5f98-40d6-ae82-bea94816277f"
 #define PSDI_SERVICE_UUID "e625601e-9e55-4597-a598-76018a0d293d"
 #define PSDI_CHARACTERISTIC_UUID "26e2b12b-85f0-4f3f-9fdd-91d114270e6e"
-//Device name and version
+// Device name and version
 #define BLE_DEV_NAME "LINE Things dev board"
 #define FIRMWARE_VERSION 2
-//Device and pin
+// Device and pin
 #define SW1 29
 #define SW2 28
 #define LED_DS2 7
@@ -98,10 +98,10 @@ void buzzerStop() {
 * Debug print
 *********************************************************************************/
 void debugPrint(String text) {
-  #ifdef USER_DEBUG
+#ifdef USER_DEBUG
   text = "[DBG]" + text;
   Serial.println(text);
-  #endif
+#endif
 }
 
 /*********************************************************************************
@@ -119,21 +119,21 @@ BLECharacteristic blesv_line_product = BLECharacteristic(blesv_line_product_uuid
 
 // LINE Things development board service
 uint8_t blesv_devboard_uuid[16];
-uint8_t blesv_devboard_notify_uuid[16];
-uint8_t blesv_devboard_write_uuid[16];
-uint8_t blesv_devboard_version_uuid[16];
-uint8_t blesv_devboard_io_write_uuid[16];
-uint8_t blesv_devboard_io_read_uuid[16];
-uint8_t blesv_devboard_io_notify_sw_uuid[16];
-uint8_t blesv_devboard_io_notify_temp_uuid[16];
+uint8_t blech_notify_board_state_uuid[16];
+uint8_t blech_write_board_state_uuid[16];
+uint8_t blech_version_uuid[16];
+uint8_t blech_command_write_uuid[16];
+uint8_t blech_command_response_uuid[16];
+uint8_t blech_notify_sw_uuid[16];
+uint8_t blech_notify_temp_uuid[16];
 BLEService blesv_devboard = BLEService(blesv_devboard_uuid);
-BLECharacteristic blesv_devboard_notify = BLECharacteristic(blesv_devboard_notify_uuid);
-BLECharacteristic blesv_devboard_write = BLECharacteristic(blesv_devboard_write_uuid);
-BLECharacteristic blesv_devboard_version = BLECharacteristic(blesv_devboard_version_uuid);
-BLECharacteristic blesv_devboard_io_write = BLECharacteristic(blesv_devboard_io_write_uuid);
-BLECharacteristic blesv_devboard_io_read = BLECharacteristic(blesv_devboard_io_read_uuid);
-BLECharacteristic blesv_devboard_io_notify_sw = BLECharacteristic(blesv_devboard_io_notify_sw_uuid);
-BLECharacteristic blesv_devboard_io_notify_temp = BLECharacteristic(blesv_devboard_io_notify_temp_uuid);
+BLECharacteristic blech_notify_board_state = BLECharacteristic(blech_notify_board_state_uuid);
+BLECharacteristic blech_write_board_state = BLECharacteristic(blech_write_board_state_uuid);
+BLECharacteristic blech_version = BLECharacteristic(blech_version_uuid);
+BLECharacteristic blech_command_write = BLECharacteristic(blech_command_write_uuid);
+BLECharacteristic blech_command_response = BLECharacteristic(blech_command_response_uuid);
+BLECharacteristic blech_notify_sw = BLECharacteristic(blech_notify_sw_uuid);
+BLECharacteristic blech_notify_temp = BLECharacteristic(blech_notify_temp_uuid);
 
 // UUID Converter
 void strUUID2Bytes(String strUUID, uint8_t binUUID[]) {
@@ -141,14 +141,11 @@ void strUUID2Bytes(String strUUID, uint8_t binUUID[]) {
   hexString.replace("-", "");
 
   for (int i = 16; i != 0; i--) {
-    binUUID[i - 1] =
-    hex2c(hexString[(16 - i) * 2], hexString[((16 - i) * 2) + 1]);
+    binUUID[i - 1] = hex2c(hexString[(16 - i) * 2], hexString[((16 - i) * 2) + 1]);
   }
 }
 
-char hex2c(char c1, char c2) {
-  return (nibble2c(c1) << 4) + nibble2c(c2);
-}
+char hex2c(char c1, char c2) { return (nibble2c(c1) << 4) + nibble2c(c2); }
 
 char nibble2c(char c) {
   if ((c >= '0') && (c <= '9')) return c - '0';
@@ -161,14 +158,14 @@ void bleConfigure(int power) {
   // UUID setup
   strUUID2Bytes(PSDI_SERVICE_UUID, blesv_line_uuid);
   strUUID2Bytes(PSDI_CHARACTERISTIC_UUID, blesv_line_product_uuid);
-  strUUID2Bytes(BOARD_SERVICE_UUID, blesv_devboard_uuid);
-  strUUID2Bytes(BOARD_CHARACTERISTIC_NOTIFY_UUID, blesv_devboard_notify_uuid);
-  strUUID2Bytes(BOARD_CHARACTERISTIC_WRITE_UUID, blesv_devboard_write_uuid);
-  strUUID2Bytes(BOARD_CHARACTERISTIC_VERSION_UUID, blesv_devboard_version_uuid);
-  strUUID2Bytes(BOARD_CHARACTERISTIC_IO_READ_UUID, blesv_devboard_io_read_uuid);
-  strUUID2Bytes(BOARD_CHARACTERISTIC_IO_WRITE_UUID, blesv_devboard_io_write_uuid);
-  strUUID2Bytes(BOARD_CHARACTERISTIC_IO_NOTIFY_SW_UUID, blesv_devboard_io_notify_sw_uuid);
-  strUUID2Bytes(BOARD_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID, blesv_devboard_io_notify_temp_uuid);
+  strUUID2Bytes(DEVBOARD_SERVICE_UUID, blesv_devboard_uuid);
+  strUUID2Bytes(NOTIFY_BOARD_STATE_CHARACTERISTIC_UUID, blech_notify_board_state_uuid);
+  strUUID2Bytes(WRITE_BOARD_STATE_CHARACTERISTIC_UUID, blech_write_board_state_uuid);
+  strUUID2Bytes(VERSION_CHARACTERISTIC_UUID, blech_version_uuid);
+  strUUID2Bytes(COMMAND_RESPONSE_CHARACTERISTIC_UUID, blech_command_response_uuid);
+  strUUID2Bytes(COMMAND_WRITE_CHARACTERISTIC_UUID, blech_command_write_uuid);
+  strUUID2Bytes(NOTIFY_SW_CHARACTERISTIC_UUID, blech_notify_sw_uuid);
+  strUUID2Bytes(NOTIFY_TEMP_CHARACTERISTIC_UUID, blech_notify_temp_uuid);
   // BLE start
   Bluefruit.begin();
   // Set max Tx power
@@ -206,43 +203,43 @@ void bleSetupServicePsdi(void) {
 
 void bleSetupServiceDevice() {
   blesv_devboard.begin();
-  blesv_devboard_notify.setProperties(CHR_PROPS_NOTIFY);
-  blesv_devboard_notify.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);//SECMODE_ENC_NO_MITM);
-  blesv_devboard_notify.setFixedLen(16);
-  blesv_devboard_notify.begin();
+  blech_notify_board_state.setProperties(CHR_PROPS_NOTIFY);
+  blech_notify_board_state.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
+  blech_notify_board_state.setFixedLen(16);
+  blech_notify_board_state.begin();
 
-  blesv_devboard_write.setProperties(CHR_PROPS_WRITE);
-  blesv_devboard_write.setPermission(SECMODE_ENC_NO_MITM, SECMODE_ENC_NO_MITM);
-  blesv_devboard_write.setWriteCallback(bleWriteEvent);
-  blesv_devboard_write.setFixedLen(20);
-  blesv_devboard_write.begin();
+  blech_write_board_state.setProperties(CHR_PROPS_WRITE);
+  blech_write_board_state.setPermission(SECMODE_ENC_NO_MITM, SECMODE_ENC_NO_MITM);
+  blech_write_board_state.setWriteCallback(bleWriteEvent);
+  blech_write_board_state.setFixedLen(20);
+  blech_write_board_state.begin();
 
-  blesv_devboard_version.setProperties(CHR_PROPS_READ);
-  blesv_devboard_version.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
-  blesv_devboard_version.setFixedLen(1);
-  blesv_devboard_version.begin();
-  blesv_devboard_version.write8(FIRMWARE_VERSION);
+  blech_version.setProperties(CHR_PROPS_READ);
+  blech_version.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
+  blech_version.setFixedLen(1);
+  blech_version.begin();
+  blech_version.write8(FIRMWARE_VERSION);
 
-  blesv_devboard_io_write.setProperties(CHR_PROPS_WRITE);
-  blesv_devboard_io_write.setPermission(SECMODE_ENC_NO_MITM, SECMODE_ENC_NO_MITM);
-  blesv_devboard_io_write.setWriteCallback(bleIoWriteEvent);
-  blesv_devboard_io_write.setFixedLen(20);
-  blesv_devboard_io_write.begin();
+  blech_command_write.setProperties(CHR_PROPS_WRITE);
+  blech_command_write.setPermission(SECMODE_ENC_NO_MITM, SECMODE_ENC_NO_MITM);
+  blech_command_write.setWriteCallback(bleIoWriteEvent);
+  blech_command_write.setFixedLen(20);
+  blech_command_write.begin();
 
-  blesv_devboard_io_read.setProperties(CHR_PROPS_READ);
-  blesv_devboard_io_read.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);//SECMODE_ENC_NO_MITM);
-  blesv_devboard_io_read.setFixedLen(4);
-  blesv_devboard_io_read.begin();
+  blech_command_response.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
+  blech_command_response.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
+  blech_command_response.setFixedLen(4);
+  blech_command_response.begin();
 
-  blesv_devboard_io_notify_sw.setProperties(CHR_PROPS_NOTIFY);
-  blesv_devboard_io_notify_sw.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
-  blesv_devboard_io_notify_sw.setFixedLen(2);
-  blesv_devboard_io_notify_sw.begin();
+  blech_notify_sw.setProperties(CHR_PROPS_NOTIFY);
+  blech_notify_sw.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
+  blech_notify_sw.setFixedLen(2);
+  blech_notify_sw.begin();
 
-  blesv_devboard_io_notify_temp.setProperties(CHR_PROPS_NOTIFY);
-  blesv_devboard_io_notify_temp.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
-  blesv_devboard_io_notify_temp.setFixedLen(2);
-  blesv_devboard_io_notify_temp.begin();
+  blech_notify_temp.setProperties(CHR_PROPS_NOTIFY);
+  blech_notify_temp.setPermission(SECMODE_ENC_NO_MITM, SECMODE_NO_ACCESS);
+  blech_notify_temp.setFixedLen(2);
+  blech_notify_temp.begin();
 }
 
 void bleSetupServiceUser() {
@@ -287,15 +284,15 @@ volatile int g_flag_update_advertiseuuid = 0;
 volatile int g_flag_error_advertiseuuid = 0;
 
 /**
-* Format
-*
-* <CMD(1Byte), don't care(2Byte), hash of payload/don't care(1Byte), Payload(16Byte)>
-* CMD0 : Write to peripheral device. LED, buzzer and GPIO
-*    CMD0(0:1Byte), don't care(0:17Byte), Peripheral(x:2Byte)
-* CMD1 : Write new service UUID : When update UUID, Should be self restart MPU:
-*    CMD1(1:1Byte), don't care(0,2Byte), hash of payload(x:1Byte),
-*    UUID(x:16Byte) UUID shoud be send binary.
-*/
+ * Format
+ *
+ * <CMD(1Byte), don't care(2Byte), hash of payload/don't care(1Byte),
+ * Payload(16Byte)> CMD0 : Write to peripheral device. LED, buzzer and GPIO
+ *    CMD0(0:1Byte), don't care(0:17Byte), Peripheral(x:2Byte)
+ * CMD1 : Write new service UUID : When update UUID, Should be self restart MPU:
+ *    CMD1(1:1Byte), don't care(0,2Byte), hash of payload(x:1Byte),
+ *    UUID(x:16Byte) UUID shoud be send binary.
+ */
 void bleWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data, uint16_t len) {
   byte cmd = data[0];
   byte index = data[1];
@@ -409,78 +406,77 @@ volatile int g_display_user_mode = 0;
 volatile int g_i2c_user_mode = 0;
 
 /**
-* Write to device format
-* See here for details.
-*    https://line.github.io/line-things-dev-board/liff-app/js-control/
-*
-* <CMD(1Byte), Payload(17Byte)>
-*  CMD0 : Control display
-*    Payload : don't care(15Byte), address_x(1Byte), address_y(1Byte)
-*  CMD1 : Write Text
-*    Payload : text length(1Byte), String(16Byte)
-*  CMD2 : Clear display
-*    Payload : don't care(17Byte)
-*  CMD3 : Write LED
-*    Payload : don't care(15Byte), port(1Byte), value(1Byte)
-*  CMD4 : Write Buzzer
-*    Payload : don't care(16Byte), value(1Byte)
-*  CMD5 : Set GPIO digital direction
-*    Payload : don't care(15Byte), port(1Byte), direction(1Byte)
-*  CMD6 : Digital Write GPIO
-*    Payload : don't care(15Byte), port(1Byte), value(1Byte)
-*  CMD7 : Analog Write GPIO
-*    Payload : don't care(15Byte), port(1Byte), value(1Byte)
-*  CMD8 : I2C Start transmission
-*    Payload : don't care(16Byte), address(1Byte)
-*  CMD9 : I2C Write data
-*    Payload : don't care(16Byte), address(1Byte)
-*  CMD10 : I2C Stop transmission
-*    Payload : don't care(17Byte)
-*  CMD11 : I2C Request from
-*    Payload : don't care(15Byte), length[1Byte], saddress(1Byte)
-*  CMD12 : I2C Read request
-*    Payload : don't care(17Byte)
-*  CMD13 : Set port for read digital value
-*    Payload : don't care(16Byte), port(1Byte)
-*  CMD14 : Set port for read analog value
-*    Payload : don't care(16Byte), port(1Byte)
-*  CMD15 : Display write font size
-*    Payload : don't care(16Byte), fontsize(1Byte)
-*  CMD16 : Write LED (Byte)
-*    Payload : don't care(16Byte), value(1Byte)
-*  CMD17 : SW Notify Config
-*    Payload : source(1Byte), triger_value(1Byte), mode(1Byte), interval(2Byte)
-*      *source:
-*        0:disable, 1:SW1, 2:SW2, 3:SW1&SW2
-*      *mode
-*        0:LOW, 1:CHANGE, 2:RISING, 3:FALLING
-*      *interval
-*        0~65535:0~65535mS
-*  CMD18 : Temperature Notify Config
-*    Payload : source(1Byte), interval(2Byte)
-*      *source:
-*        0:disable 1:temperature
-*      *interval
-*        0~65535:0~65535mS
-*  CMD32 : Set BLE Read data
-*    Payload : don't care(16Byte), Read CMD(1Byte)
-*
-* Read to device format(Read CMD)
-* <Payload(4Byte)>
-*  CMD0 : Switch status
-*    Payload : don't care(3Byte), switch value(1Byte)
-*  CMD1 : Accel value
-*    Payload : don't care(1Byte), X(1Byte), Y(1Byte), Z(1Byte)
-*  CMD2 : Temperature value
-*    Payload : don't care(2Byte), value(2Byte)
-*  CMD3 : Read Digital GPIO value (using by BLE write pointer CMD13)
-*    Payload : don't care(3Byte), value(1Byte)
-*  CMD4 : Read Analog GPIO value (using by BLE write pointer CMD14)
-*    Payload : don't care(3Byte), value(1Byte)
-*  CMD5 : I2C Read
-*    Payload : don't care(2Byte), flag(1Byte), value(1Byte)
-*/
-
+ * Write to device format
+ * See here for details.
+ *    https://line.github.io/line-things-dev-board/liff-app/js-control/
+ *
+ * <CMD(1Byte), Payload(17Byte)>
+ *  CMD0 : Control display
+ *    Payload : don't care(15Byte), address_x(1Byte), address_y(1Byte)
+ *  CMD1 : Write Text
+ *    Payload : text length(1Byte), String(16Byte)
+ *  CMD2 : Clear display
+ *    Payload : don't care(17Byte)
+ *  CMD3 : Write LED
+ *    Payload : don't care(15Byte), port(1Byte), value(1Byte)
+ *  CMD4 : Write Buzzer
+ *    Payload : don't care(16Byte), value(1Byte)
+ *  CMD5 : Set GPIO digital direction
+ *    Payload : don't care(15Byte), port(1Byte), direction(1Byte)
+ *  CMD6 : Digital Write GPIO
+ *    Payload : don't care(15Byte), port(1Byte), value(1Byte)
+ *  CMD7 : Analog Write GPIO
+ *    Payload : don't care(15Byte), port(1Byte), value(1Byte)
+ *  CMD8 : I2C Start transmission
+ *    Payload : don't care(16Byte), address(1Byte)
+ *  CMD9 : I2C Write data
+ *    Payload : don't care(16Byte), address(1Byte)
+ *  CMD10 : I2C Stop transmission
+ *    Payload : don't care(17Byte)
+ *  CMD11 : I2C Request from
+ *    Payload : don't care(15Byte), length[1Byte], saddress(1Byte)
+ *  CMD12 : I2C Read request
+ *    Payload : don't care(17Byte)
+ *  CMD13 : Set port for read digital value
+ *    Payload : don't care(16Byte), port(1Byte)
+ *  CMD14 : Set port for read analog value
+ *    Payload : don't care(16Byte), port(1Byte)
+ *  CMD15 : Display write font size
+ *    Payload : don't care(16Byte), fontsize(1Byte)
+ *  CMD16 : Write LED (Byte)
+ *    Payload : don't care(16Byte), value(1Byte)
+ *  CMD17 : SW Notify Config
+ *    Payload : source(1Byte), triger_value(1Byte), mode(1Byte), interval(2Byte)
+ *      *source:
+ *        0:disable, 1:SW1, 2:SW2, 3:SW1&SW2
+ *      *mode
+ *        0:LOW, 1:CHANGE, 2:RISING, 3:FALLING
+ *      *interval
+ *        0~65535:0~65535mS
+ *  CMD18 : Temperature Notify Config
+ *    Payload : source(1Byte), interval(2Byte)
+ *      *source:
+ *        0:disable 1:temperature
+ *      *interval
+ *        0~65535:0~65535mS
+ *  CMD32 : Set BLE Read data
+ *    Payload : don't care(16Byte), Read CMD(1Byte)
+ *
+ * Read to device format(Read CMD)
+ * <Payload(4Byte)>
+ *  CMD0 : Switch status
+ *    Payload : don't care(3Byte), switch value(1Byte)
+ *  CMD1 : Accel value
+ *    Payload : don't care(1Byte), X(1Byte), Y(1Byte), Z(1Byte)
+ *  CMD2 : Temperature value
+ *    Payload : don't care(2Byte), value(2Byte)
+ *  CMD3 : Read Digital GPIO value (using by BLE write pointer CMD13)
+ *    Payload : don't care(3Byte), value(1Byte)
+ *  CMD4 : Read Analog GPIO value (using by BLE write pointer CMD14)
+ *    Payload : don't care(3Byte), value(1Byte)
+ *  CMD5 : I2C Read
+ *    Payload : don't care(2Byte), flag(1Byte), value(1Byte)
+ */
 void bleIoWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data, uint16_t len) {
   byte cmd = data[0];
   switch (cmd) {
@@ -588,21 +584,15 @@ void bleIoWriteEvent(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data
 *********************************************************************************/
 volatile int g_flag_display = 0;
 SoftwareTimer timerDisplay;
-void displayUpdateEvent(TimerHandle_t xTimerID) {
-  g_flag_display = 1;
-}
+void displayUpdateEvent(TimerHandle_t xTimerID) { g_flag_display = 1; }
 
 volatile int g_flag_notify = 0;
 SoftwareTimer timerNotify;
-void bleNotifyEvent(TimerHandle_t xTimerID) {
-  g_flag_notify = 1;
-}
+void bleNotifyEvent(TimerHandle_t xTimerID) { g_flag_notify = 1; }
 
 volatile int g_flag_io_temp_read = 0;
 SoftwareTimer io_notify_temp_interval;
-void bleIoNotifyTempEvent(TimerHandle_t xTimerID) {
-  g_flag_io_temp_read = 1;
-}
+void bleIoNotifyTempEvent(TimerHandle_t xTimerID) { g_flag_io_temp_read = 1; }
 
 /*********************************************************************************
 * SW Event
@@ -710,12 +700,22 @@ unsigned int swGetValue(unsigned int sw) {
 void ledWrite(unsigned int num, unsigned data) {
   debugPrint("[BLE]LED : write led value");
   unsigned int pin;
-  switch(num) {
-    case 2: pin = LED_DS2; break;
-    case 3: pin = LED_DS3; break;
-    case 4: pin = LED_DS4; break;
-    case 5: pin = LED_DS5; break;
-    default: pin = LED_DS2; break;
+  switch (num) {
+    case 2:
+      pin = LED_DS2;
+      break;
+    case 3:
+      pin = LED_DS3;
+      break;
+    case 4:
+      pin = LED_DS4;
+      break;
+    case 5:
+      pin = LED_DS5;
+      break;
+    default:
+      pin = LED_DS2;
+      break;
   }
   digitalWrite(pin, data);
 }
@@ -813,7 +813,7 @@ void setup() {
   timerDisplay.begin(500, displayUpdateEvent);
   // Timer for notify
   timerNotify.begin(800, bleNotifyEvent);
-  // Timer for temperature notify interval (for BOARD_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID)
+  // Timer for temperature notify interval (for NOTIFY_TEMP_CHARACTERISTIC_UUID)
   io_notify_temp_interval.begin(1000, bleIoNotifyTempEvent);
   // Disable LED control by bootloader
   Bluefruit.autoConnLed(false);
@@ -831,8 +831,8 @@ void setup() {
   // Temperature sensor init
   temp.init();
   // ADC init
-  analogReference(AR_VDD4); //ADC reference = VDD
-  analogReadResolution(10); //ADC 10bit
+  analogReference(AR_VDD4);  // ADC reference = VDD
+  analogReadResolution(10);  // ADC 10bit
   // Load advertising UUID config
   InternalFS.begin();
   // If SW1 is 1 when reset, or don't find config file in flash
@@ -998,14 +998,24 @@ void command_characteristic_handler() {
     i2cReadData = i2cRead();
   }
   // Notify SW
-  if(g_notify_sw.changed) {
+  if (g_notify_sw.changed) {
     uint32_t mode;
-    switch(g_notify_sw.mode) {
-      case 0: mode = LOW; break;
-      case 1: mode = CHANGE; break;
-      case 2: mode = RISING; break;
-      case 3: mode = FALLING; break;
-      default: mode = LOW; break;
+    switch (g_notify_sw.mode) {
+      case 0:
+        mode = LOW;
+        break;
+      case 1:
+        mode = CHANGE;
+        break;
+      case 2:
+        mode = RISING;
+        break;
+      case 3:
+        mode = FALLING;
+        break;
+      default:
+        mode = LOW;
+        break;
     }
     // Disable Switch callback
     detachInterrupt(SW1);
@@ -1063,7 +1073,7 @@ void command_characteristic_handler() {
         break;
     }
     // Set BLE Register
-    blesv_devboard_io_read.write(data, sizeof(data));
+    blech_command_response.notify(data, sizeof(data));
     g_read_action.changed = 0;
   }
 }
@@ -1081,7 +1091,8 @@ void loop() {
   }
 
   bool refresh_display = g_flag_display && !g_display_user_mode && !g_i2c_user_mode;
-  bool notify_sensor = g_flag_notify && blesv_devboard_notify.notifyEnabled();
+  bool notify_sensor = g_flag_notify && blech_notify_board_state.notifyEnabled();
+  
   float temperature;
   // Read sensor value
   if (!g_i2c_user_mode && (refresh_display || notify_sensor)) {
@@ -1139,8 +1150,8 @@ void loop() {
 void update_advertiseuuid() {
   if (g_flag_error_advertiseuuid) {
     String errorMsg =
-    "[ERROR] : Write new advertising UUID, Hash isn't match. "
-    "Please retry it.";
+        "[ERROR] : Write new advertising UUID, Hash isn't match. "
+        "Please retry it.";
     debugPrint(errorMsg);
     display.clearDisplay();
     display.setTextSize(1);
@@ -1204,20 +1215,20 @@ void board_user_write() {
 }
 
 void notify_sw_handler() {
-  if (blesv_devboard_io_notify_sw.notifyEnabled()) {
+  if (blech_notify_sw.notifyEnabled()) {
     if (g_flag_sw1 && (millis() - g_last_notified_sw1) > g_notify_sw.interval) {
-      byte notify[2] = {1, g_data_sw1};         // {SW, value}
+      byte notify[2] = {1, g_data_sw1};  // {SW, value}
       g_flag_sw1 = 0;
       g_last_notified_sw1 = millis();
       debugPrint("SW1 Event");
-      blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
+      blech_notify_sw.notify(notify, sizeof(notify));
     }
     if (g_flag_sw2 && (millis() - g_last_notified_sw2) > g_notify_sw.interval) {
-      byte notify[2] = {2, g_data_sw2};         // {SW, value}
+      byte notify[2] = {2, g_data_sw2};  // {SW, value}
       g_flag_sw2 = 0;
       g_last_notified_sw2 = millis();
       debugPrint("SW2 Event");
-      blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
+      blech_notify_sw.notify(notify, sizeof(notify));
     }
   }
 }
@@ -1227,11 +1238,11 @@ void notify_temp_handler() {
     debugPrint("User using I2C from JS. Do not work temperature notify when user using I2C from JS");
     return;
   }
-  if (g_flag_io_temp_read && blesv_devboard_io_notify_temp.notifyEnabled()) {
+  if (g_flag_io_temp_read && blech_notify_temp.notifyEnabled()) {
     unsigned int temp = tempRead() * 100;
     byte notify[2] = {temp >> 8, temp & 0xff};
     debugPrint("TEMP Event");
-    blesv_devboard_io_notify_temp.notify(notify, sizeof(notify));
+    blech_notify_temp.notify(notify, sizeof(notify));
     g_flag_io_temp_read = 0;
   }
 }
@@ -1247,5 +1258,5 @@ void notify_board_state(float acc_x, float acc_y, float acc_z, float temperature
     FIRMWARE_VERSION,
     0
   };
-  blesv_devboard_notify.notify((uint8_t*)tx_frame, sizeof(tx_frame));
+  blech_notify_board_state.notify((uint8_t*)tx_frame, sizeof(tx_frame));
 }

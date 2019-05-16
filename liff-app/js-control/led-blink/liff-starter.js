@@ -128,7 +128,7 @@ function connectDevice(device) {
             updateConnectionStatus(device, 'connected');
             connectingUUIDSet.delete(device.id);
 
-            const things = new ThingsConn(
+            const things = new ThingsIo(
                 device,
                 USER_SERVICE_UUID,
                 USER_CHARACTERISTIC_VERSION_UUID,
@@ -260,9 +260,6 @@ function updateConnectionStatus(device, status) {
         document.getElementById(device.id).classList.remove('active');
     }
 }
-
-
-
 
 function getDeviceCard(device) {
     return document.getElementById('device-' + device.id);

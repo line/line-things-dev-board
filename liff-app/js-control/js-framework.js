@@ -1,5 +1,5 @@
 
-class ThingsConn {
+class ThingsIo {
     constructor(device, svUuid, versionUuid, writeUuid, writeIoUuid, readIoUuid, notifySwUuid, notifyTempUuid) {
         this.device = device;
         this.svUuid = svUuid;

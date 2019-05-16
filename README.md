@@ -816,6 +816,10 @@ Flash上に記載されたUUIDを上書きをする必要があります。
 
 [Service UUIDを初期状態に戻す](#service-uuidを初期状態に戻す)を参照して行ってください。
 
+次に、スマートフォン側で、OS の Bluetooth デバイス連携画面からデバイス登録を解除し、その後 LINE App上の LINE Things のデバイス連携画面からも解除を行います。
+通常、これで新たUUIDのデバイスと接続できるようになりますが、それでもだめな場合は LINE App を Kill して、OS の Bluetooth デバイス管理画面から Bluetooth を OFF/ON してみます。
+これでも見つからない場合は、OS を再起動してください。
+
 ---
 
 # 詳しい人向け

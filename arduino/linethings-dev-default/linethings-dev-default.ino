@@ -598,12 +598,6 @@ void bleNotifyEvent(TimerHandle_t xTimerID) {
   g_flag_notify = 1;
 }
 
-volatile int g_flag_readsensor = 0;
-SoftwareTimer timerReadSensor;
-void bleReadSensorEvent(TimerHandle_t xTimerID) {
-  g_flag_readsensor = 1;
-}
-
 volatile int g_flag_io_temp_read = 0;
 SoftwareTimer io_notify_temp_interval;
 void bleIoNotifyTempEvent(TimerHandle_t xTimerID) {
@@ -811,20 +805,6 @@ int ioAnalogRead(int pin) {
 /*********************************************************************************
 * Setup
 *********************************************************************************/
-void notifyBoardInfo(float acc_x, float acc_y, float acc_z, float temperature, int sw1, int sw2) {
-  int16_t tx_frame[8] = {
-    (int16_t) temperature * 100,
-    acc_x * 1000,
-    acc_y * 1000,
-    acc_z * 1000,
-    sw1,
-    sw2,
-    FIRMWARE_VERSION,
-    0
-  };
-  blesv_devboard_notify.notify((uint8_t*)tx_frame, sizeof(tx_frame));
-}
-
 void setup() {
   // Serial init
   Serial.begin(115200);
@@ -833,8 +813,6 @@ void setup() {
   timerDisplay.begin(500, displayUpdateEvent);
   // Timer for notify
   timerNotify.begin(800, bleNotifyEvent);
-  // Timer for sensor read
-  timerReadSensor.begin(300, bleReadSensorEvent);
   // Timer for temperature notify interval (for BOARD_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID)
   io_notify_temp_interval.begin(1000, bleIoNotifyTempEvent);
   // Disable LED control by bootloader
@@ -934,7 +912,6 @@ void setupPin() {
   // Start Software Timer
   timerDisplay.start();
   timerNotify.start();
-  timerReadSensor.start();
 }
 
 void command_characteristic_handler() {
@@ -1103,55 +1080,54 @@ void loop() {
     g_flag_user_write = 0;
   }
 
+  bool refresh_display = g_flag_display && !g_display_user_mode && !g_i2c_user_mode;
+  bool notify_sensor = g_flag_notify && blesv_devboard_notify.notifyEnabled();
   float temperature;
   // Read sensor value
-  if (g_flag_readsensor && !g_i2c_user_mode) {
+  if (!g_i2c_user_mode && (refresh_display || notify_sensor)) {
     temperature = temp.read();
     if (accel.available()) {
       accel.read();
     }
-    g_flag_readsensor = 0;
   }
 
   // Display write (Default)
-  if (!g_display_user_mode) {
-    if (g_flag_display) {
-      display.clearDisplay();
-      display.setTextSize(1);
-      display.setTextColor(WHITE);
-      display.setCursor(0, 10);
-      if (Bluefruit.connected()) {
-        display.println("LINE Things [BLE]");
-      } else {
-        display.println("LINE Things");
-      }
-      display.print("X:");
-      display.println(accel.cx);
-      display.print("Y:");
-      display.println(accel.cy);
-      display.print("Z:");
-      display.println(accel.cz);
-      display.print("Temperature:");
-      display.println(temperature);
-      if (g_data_sw1) {
-        display.print("SW1:ON / ");
-      } else {
-        display.print("SW1:OFF / ");
-      }
-      if (g_data_sw2) {
-        display.println("SW2:ON");
-      } else {
-        display.println("SW2:OFF");
-      }
-      display.display();
-      g_flag_display = 0;
+  if (refresh_display) {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 10);
+    if (Bluefruit.connected()) {
+      display.println("LINE Things [BLE]");
+    } else {
+      display.println("LINE Things");
     }
+    display.print("X:");
+    display.println(accel.cx);
+    display.print("Y:");
+    display.println(accel.cy);
+    display.print("Z:");
+    display.println(accel.cz);
+    display.print("Temperature:");
+    display.println(temperature);
+    if (g_data_sw1) {
+      display.print("SW1:ON / ");
+    } else {
+      display.print("SW1:OFF / ");
+    }
+    if (g_data_sw2) {
+      display.println("SW2:ON");
+    } else {
+      display.println("SW2:OFF");
+    }
+    display.display();
+    g_flag_display = 0;
   }
 
   if (Bluefruit.connected()) {
     // Notify board state
-    if (g_flag_notify) {
-      notifyBoardInfo(accel.cx, accel.cy, accel.cz, temperature, g_data_sw1, g_data_sw2);
+    if (notify_sensor) {
+      notify_board_state(accel.cx, accel.cy, accel.cz, temperature, g_data_sw1, g_data_sw2);
       g_flag_notify = 0;
     }
     notify_sw_handler();
@@ -1228,32 +1204,48 @@ void board_user_write() {
 }
 
 void notify_sw_handler() {
-  if (g_flag_sw1 && (millis() - g_last_notified_sw1) > g_notify_sw.interval) {
-    byte notify[2] = {1, g_data_sw1};         // {SW, value}
-    g_flag_sw1 = 0;
-    g_last_notified_sw1 = millis();
-    debugPrint("SW1 Event");
-    blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
-  }
-  if (g_flag_sw2 && (millis() - g_last_notified_sw2) > g_notify_sw.interval) {
-    byte notify[2] = {2, g_data_sw2};         // {SW, value}
-    g_flag_sw2 = 0;
-    g_last_notified_sw2 = millis();
-    debugPrint("SW2 Event");
-    blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
+  if (blesv_devboard_io_notify_sw.notifyEnabled()) {
+    if (g_flag_sw1 && (millis() - g_last_notified_sw1) > g_notify_sw.interval) {
+      byte notify[2] = {1, g_data_sw1};         // {SW, value}
+      g_flag_sw1 = 0;
+      g_last_notified_sw1 = millis();
+      debugPrint("SW1 Event");
+      blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
+    }
+    if (g_flag_sw2 && (millis() - g_last_notified_sw2) > g_notify_sw.interval) {
+      byte notify[2] = {2, g_data_sw2};         // {SW, value}
+      g_flag_sw2 = 0;
+      g_last_notified_sw2 = millis();
+      debugPrint("SW2 Event");
+      blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
+    }
   }
 }
 
 void notify_temp_handler() {
-  if (g_flag_io_temp_read) {
-    if (g_i2c_user_mode) {
-      debugPrint("User using I2C from JS. Do not work temperature notify when user using I2C from JS");
-      return;
-    }
+  if (g_i2c_user_mode) {
+    debugPrint("User using I2C from JS. Do not work temperature notify when user using I2C from JS");
+    return;
+  }
+  if (g_flag_io_temp_read && blesv_devboard_io_notify_temp.notifyEnabled()) {
     unsigned int temp = tempRead() * 100;
     byte notify[2] = {temp >> 8, temp & 0xff};
     debugPrint("TEMP Event");
     blesv_devboard_io_notify_temp.notify(notify, sizeof(notify));
     g_flag_io_temp_read = 0;
   }
+}
+
+void notify_board_state(float acc_x, float acc_y, float acc_z, float temperature, int sw1, int sw2) {
+  int16_t tx_frame[8] = {
+    (int16_t) temperature * 100,
+    acc_x * 1000,
+    acc_y * 1000,
+    acc_z * 1000,
+    sw1,
+    sw2,
+    FIRMWARE_VERSION,
+    0
+  };
+  blesv_devboard_notify.notify((uint8_t*)tx_frame, sizeof(tx_frame));
 }

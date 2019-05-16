@@ -602,12 +602,6 @@ void bleReadSensorEvent(TimerHandle_t xTimerID) {
   g_flag_readsensor = 1;
 }
 
-volatile int g_flag_io_notify_sw_disable = 0;
-SoftwareTimer io_notify_sw_interval;
-void bleIoNotifySwEvent(TimerHandle_t xTimerID) {
-  g_flag_io_notify_sw_disable = 0;
-}
-
 volatile int g_flag_io_temp_read = 0;
 SoftwareTimer io_notify_temp_interval;
 void bleIoNotifyTempEvent(TimerHandle_t xTimerID) {
@@ -617,34 +611,26 @@ void bleIoNotifyTempEvent(TimerHandle_t xTimerID) {
 /*********************************************************************************
 * SW Event
 *********************************************************************************/
-volatile int g_flag_sw1 = 0;
-volatile int g_data_sw1 = 0;
+volatile byte g_flag_sw1 = 0;
+volatile byte g_data_sw1 = 0;
+volatile unsigned long g_last_notified_sw1 = 0;
 void sw1ChangedEvent() {
-  if (g_js_control_mode) {
-    if (!g_flag_io_notify_sw_disable && (g_notify_sw.source && 1) && !g_flag_sw1) {
-      g_flag_sw1 = 1;
-      g_flag_io_notify_sw_disable = 1;
-      io_notify_sw_interval.start();
-    }
-  } else {
-    g_flag_sw1 = 1;
+  byte value = !digitalRead(SW1);
+  if (g_js_control_mode && g_notify_sw.source & 1 && value != g_data_sw1) {
+    g_data_sw1 = value;
+    g_flag_sw1++;
   }
-  g_data_sw1 = !digitalRead(SW1);
 }
 
-volatile int g_flag_sw2 = 0;
-volatile int g_data_sw2 = 0;
+volatile byte g_flag_sw2 = 0;
+volatile byte g_data_sw2 = 0;
+volatile unsigned long g_last_notified_sw2 = 0;
 void sw2ChangedEvent() {
-  if (g_js_control_mode) {
-    if (!g_flag_io_notify_sw_disable && ((g_notify_sw.source >> 1) && 1) && !g_flag_sw2) {
-      g_flag_sw2 = 1;
-      g_flag_io_notify_sw_disable = 1;
-      io_notify_sw_interval.start();
-    }
-  } else {
-    g_flag_sw2 = 1;
+  byte value = !digitalRead(SW2);
+  if (g_js_control_mode && g_notify_sw.source & 2 && value != g_data_sw2) {
+    g_data_sw2 = value;
+    g_flag_sw2++;
   }
-  g_data_sw2 = !digitalRead(SW2);
 }
 
 /*********************************************************************************
@@ -848,8 +834,6 @@ void setup() {
   timerNotify.begin(800, bleNotifyEvent);
   // Timer for sensor read
   timerReadSensor.begin(300, bleReadSensorEvent);
-  // Timer for SW notify interval (for DEFAULT_CHARACTERISTIC_IO_NOTIFY_SW_UUID)
-  io_notify_sw_interval.begin(g_notify_sw.interval, bleIoNotifySwEvent);
   // Timer for temperature notify interval (for DEFAULT_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID)
   io_notify_temp_interval.begin(1000, bleIoNotifyTempEvent);
   // Disable LED control by bootloader
@@ -917,7 +901,6 @@ void setup() {
 
 void setupPin() {
   // Timer STOP
-  io_notify_sw_interval.stop();
   io_notify_temp_interval.stop();
   // Set IO for LED
   pinMode(LED_DS2, OUTPUT);
@@ -1052,12 +1035,10 @@ void bleJsControl() {
     detachInterrupt(SW1);
     detachInterrupt(SW2);
     // Check Switch interrupt
-    if (g_notify_sw.source && 1) {
-      io_notify_sw_interval.setPeriod(g_notify_sw.interval);
+    if (g_notify_sw.source & 1) {
       attachInterrupt(SW1, sw1ChangedEvent, mode);
     }
-    if ((g_notify_sw.source >> 1) && 1) {
-      io_notify_sw_interval.setPeriod(g_notify_sw.interval);
+    if (g_notify_sw.source & 2) {
       attachInterrupt(SW2, sw2ChangedEvent, mode);
     }
     g_notify_sw.changed = 0;
@@ -1110,18 +1091,20 @@ void bleJsControl() {
     g_read_action.changed = 0;
   }
   // Notify SW
-  if (g_flag_sw1) {
-    byte notify[2] = {1, g_data_sw1};         //{SW, value}
+  if (g_flag_sw1 && (millis() - g_last_notified_sw1) > 10) {
+    byte notify[2] = {1, g_data_sw1};         // {SW, value}
+    g_flag_sw1 = 0;
+    g_last_notified_sw1 = millis();
     debugPrint("SW1 Event");
     blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
   }
-  if (g_flag_sw2) {
-    byte notify[2] = {2, g_data_sw2};         //{SW, value}
+  if (g_flag_sw2 && (millis() - g_last_notified_sw2) > 10) {
+    byte notify[2] = {2, g_data_sw2};         // {SW, value}
+    g_flag_sw2 = 0;
+    g_last_notified_sw2 = millis();
     debugPrint("SW2 Event");
     blesv_devboard_io_notify_sw.notify(notify, sizeof(notify));
   }
-  g_flag_sw1 = 0;
-  g_flag_sw2 = 0;
 
   // Notify Temperature
   if (g_flag_io_temp_read /* && Bluefruit.connected()*/) {

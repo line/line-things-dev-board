@@ -21,7 +21,6 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
 ## CPUボード
 ![CPU Board](img/cpuboard.jpg)
 
-
 [Raytac MDBT42Q](http://www.raytac.com/product/ins.php?index_id=31)モジュールを搭載しています。
 AdafruitのArduinoコアを利用可能でArduino IDEを使用して開発することができ、J-LINKなどから利用できるJTAG(SWD)ポートを用意しているので、
 Arduinoではなくご自身でフルスクラッチ開発も可能となっています。マザーボードに挿して使用することも、CPUボード単体で使用することも可能です。
@@ -69,7 +68,7 @@ LINE Things上でモーターを除くすべてのデバイスの状態を取得
 
 ファームウェアを書き換えることなく、LIFFからLINEデバイスの挙動をより高度にコントロールする機能も用意しています。
 この機能を用いると、例えば任意のタイミングでデバイスからNotifyさせたり、各種センサの値を任意に設定したり、取得することが可能です。
-これらの使い方は[Java Scriptからデバイスをより高度にコントロールする方法](https://line.github.io/line-things-dev-board/liff-app/js-control/)を参照してください。
+これらの使い方は[JavaScript から LINE Things Board を制御する](https://line.github.io/line-things-dev-board/liff-app/js-control/)を参照してください。
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。
 この機能は LINE Developers から Service UUID を取得して、LINE Things developers trial の独自デバイスを構築する際に、
@@ -734,14 +733,14 @@ DRV8830DGQRは裏のGNDパッドを基板の裏側からハンダを流しては
 
 |説明 | 名称 | UUID | 使用先 |
 ----|----|----|----
-| 1  | DEFAULT_SERVICE_UUID | f2b742dc-35e3-4e55-9def-0ce4a209c552 |  |
-| 2 | DEFAULT_CHARACTERISTIC_NOTIFY_UUID | e90b4b4e-f18a-44f0-8691-b041c7fe57f2 | liff-app/linethings-dev-default/ |
-| 3 | DEFAULT_CHARACTERISTIC_WRITE_UUID | 4f2596d7-b3d6-4102-85a2-947b80ab4c6f | liff-app/linethings-dev-default/, liff-app/js-control/ |
-| 4 | DEFAULT_CHARACTERISTIC_VERSION_UUID | be25a3fe-92cd-41af-aeee-0a9097570815 | liff-app/js-control/ |
-| 5 | DEFAULT_CHARACTERISTIC_IO_NOTIFY_SW_UUID | a11bd5c0-e7da-4015-869b-d5c0087d3cc4 | liff-app/js-control/ |
-| 6 | DEFAULT_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID | fe9b11a8-5f98-40d6-ae82-bea94816277f | liff-app/js-control/ |
-| 7 | DEFAULT_CHARACTERISTIC_IO_READ_UUID | 1737f2f4-c3d3-453b-a1a6-9efe69cc944f | liff-app/js-control/ |
-| 8 | DEFAULT_CHARACTERISTIC_IO_WRITE_UUID | 5136e866-d081-47d3-aabc-a2c9518bacd4 | liff-app/js-control/ |
+| 1  | DEVBOARD_SERVICE_UUID | f2b742dc-35e3-4e55-9def-0ce4a209c552 |  |
+| 2 | NOTIFY_BOARD_STATE_CHARACTERISTIC_UUID | e90b4b4e-f18a-44f0-8691-b041c7fe57f2 | liff-app/linethings-dev-default/ |
+| 3 | WRITE_BOARD_STATE_CHARACTERISTIC_UUID | 4f2596d7-b3d6-4102-85a2-947b80ab4c6f | liff-app/linethings-dev-default/, liff-app/js-control/ |
+| 4 | VERSION_CHARACTERISTIC_UUID | be25a3fe-92cd-41af-aeee-0a9097570815 | liff-app/js-control/ |
+| 5 | NOTIFY_SW_CHARACTERISTIC_UUID | a11bd5c0-e7da-4015-869b-d5c0087d3cc4 | liff-app/js-control/ |
+| 6 | NOTIFY_TEMP_CHARACTERISTIC_UUID | fe9b11a8-5f98-40d6-ae82-bea94816277f | liff-app/js-control/ |
+| 7 | COMMAND_RESPONSE_CHARACTERISTIC_UUID | 1737f2f4-c3d3-453b-a1a6-9efe69cc944f | liff-app/js-control/ |
+| 8 | COMMAND_WRITE_CHARACTERISTIC_UUID | 5136e866-d081-47d3-aabc-a2c9518bacd4 | liff-app/js-control/ |
 
 
 1. Dev boardのService UUID。

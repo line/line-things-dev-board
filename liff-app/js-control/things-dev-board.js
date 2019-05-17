@@ -1,22 +1,35 @@
-/**
-* Advanced IO Control
-*    All most devices on the dev board and all IOs can be controlled from this LIFF.
-*    (Not required to changing the firmware)
-*    Used in combination with default firmware in /arduino/linethings-dev-default/linethings-dev-default.ino of repository.
-*    See here for details.
-*    https://line.github.io/line-things-dev-board/liff-app/js-control/
-*/
+const DEVBOARD_SERVICE_UUID = "f2b742dc-35e3-4e55-9def-0ce4a209c552";
+const NOTIFY_BOARD_STATE_CHARACTERISTIC_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
+const WRITE_BOARD_STATE_CHARACTERISTIC_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
+const VERSION_CHARACTERISTIC_UUID = "be25a3fe-92cd-41af-aeee-0a9097570815";
+const COMMAND_WRITE_CHARACTERISTIC_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
+const COMMAND_RESPONSE_CHARACTERISTIC_UUID = "1737f2f4-c3d3-453b-a1a6-9efe69cc944f";
+const NOTIFY_SW_CHARACTERISTIC_UUID = "a11bd5c0-e7da-4015-869b-d5c0087d3cc4";
+const NOTIFY_TEMP_CHARACTERISTIC_UUID = "fe9b11a8-5f98-40d6-ae82-bea94816277f";
 
-class ThingsIo {
-    constructor(device, svUuid, versionUuid, writeUuid, writeIoUuid, readIoUuid, notifySwUuid, notifyTempUuid) {
+/**
+ * LINE Things development board - Advanced IO control library
+ *    See here for details.
+ *    https://line.github.io/line-things-dev-board/liff-app/js-control/
+ */
+class ThingsDevBoard { 
+    constructor(device) {
         this.device = device;
-        this.svUuid = svUuid;
-        this.verUuid = versionUuid;
-        this.wrUuid = writeUuid;
-        this.wrIoUuid = writeIoUuid;
-        this.rdIoUuid = readIoUuid;
-        this.ntfySwUuid = notifySwUuid;
-        this.ntfyTempUuid = notifyTempUuid;
+        this.svUuid = DEVBOARD_SERVICE_UUID;
+        this.verUuid = VERSION_CHARACTERISTIC_UUID;
+        this.wrUuid = WRITE_BOARD_STATE_CHARACTERISTIC_UUID;
+        this.wrIoUuid = COMMAND_WRITE_CHARACTERISTIC_UUID;
+        this.rdIoUuid = COMMAND_RESPONSE_CHARACTERISTIC_UUID;
+        this.ntfySwUuid = NOTIFY_SW_CHARACTERISTIC_UUID;
+        this.ntfyTempUuid = NOTIFY_TEMP_CHARACTERISTIC_UUID;
+    }
+
+    async connect() {
+        await this.device.gatt.connect();
+    }
+
+    disconnect() {
+        this.device.gatt.disconnect();
     }
 
     async writeAdvertUuid(uuid) {
@@ -83,10 +96,10 @@ class ThingsIo {
 
     async displayWrite(text) {
         let ch_array = text.split("");
-        for(let i = 0; i < 16; i = i + 1){
-            if(i >= text.length){
+        for (let i = 0; i < 16; i = i + 1) {
+            if (i >= text.length) {
                 ch_array[i] = 0;
-            }else{
+            } else {
                 ch_array[i] = (new TextEncoder('ascii')).encode(ch_array[i]);
             }
         }
@@ -183,31 +196,16 @@ class ThingsIo {
     async deviceRead() {
         const readCmdCharacteristic = await this.getCharacteristic(
             this.device, this.svUuid, this.rdIoUuid);
-
-        const valueBuffer = await this.readCharacteristic(readCmdCharacteristic);
-
-        const result = [valueBuffer.getInt16(0, true), valueBuffer.getInt16(2, true)];
-        console.debug('Read Value  : ' + result[0] + ", " + result[1]);
-        this.readvalue = (result[0] * 65536) + result[1];
+        return await this.readCharacteristic(readCmdCharacteristic);
     }
 
     async deviceVersionRead() {
         const readCmdCharacteristic = await this.getCharacteristic(
             this.device, this.svUuid, this.verUuid);
 
-        const valueBuffer = await this.readCharacteristic(readCmdCharacteristic);
-
-        const result = valueBuffer.getInt8(0);
-        console.debug('Version : ' + result);
-        this.version = result;
-    }
-
-    versionRead() {
-        return this.version;
-    }
-
-    valueRead() {
-        return this.readvalue;
+        const value = await this.readCharacteristic(readCmdCharacteristic);
+        console.debug('Version : ' + value.getInt8(0));
+        return value.getInt8(0);
     }
 
     async sleep(ms) {
@@ -236,7 +234,6 @@ class ThingsIo {
         }
         const characteristic = await this.getCharacteristic(this.device, this.svUuid, uuid);
         await characteristic.writeValue(new Uint8Array(data));
-        await this.sleep(50);
     }
 
     async getCharacteristic(device, serviceId, characteristicId) {

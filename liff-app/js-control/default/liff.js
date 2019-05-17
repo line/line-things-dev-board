@@ -1,12 +1,3 @@
-const DEVBOARD_SERVICE_UUID = "f2b742dc-35e3-4e55-9def-0ce4a209c552";
-const NOTIFY_BOARD_STATE_CHARACTERISTIC_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
-const WRITE_BOARD_STATE_CHARACTERISTIC_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
-const VERSION_CHARACTERISTIC_UUID = "be25a3fe-92cd-41af-aeee-0a9097570815";
-const COMMAND_WRITE_CHARACTERISTIC_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
-const COMMAND_RESPONSE_CHARACTERISTIC_UUID = "1737f2f4-c3d3-453b-a1a6-9efe69cc944f";
-const NOTIFY_SW_CHARACTERISTIC_UUID = "a11bd5c0-e7da-4015-869b-d5c0087d3cc4";
-const NOTIFY_TEMP_CHARACTERISTIC_UUID = "fe9b11a8-5f98-40d6-ae82-bea94816277f";
-
 const deviceUUIDSet = new Set();
 const connectedUUIDSet = new Set();
 const connectingUUIDSet = new Set();
@@ -47,7 +38,6 @@ async function checkAvailablityAndDo(callbackIfAvailable) {
     onScreenLog(`ERROR on getAvailability: ${e}`);
     return false;
   });
-  // onScreenLog("Check availablity: " + isAvailable);
 
   if (isAvailable) {
     document.getElementById('alert-liffble-notavailable').style.display = 'none';
@@ -94,17 +84,13 @@ function addDeviceToList(device) {
   deviceItem.classList.add("d-flex");
   deviceItem.addEventListener('click', () => {
     deviceItem.classList.add("active");
-    try {
-      connectDevice(device);
-    } catch (e) {
-      onScreenLog('Initializing device failed. ' + e);
-    }
+    connectDevice(device);
   });
   deviceList.appendChild(deviceItem);
 }
 
 // Select target device and connect it
-function connectDevice(device) {
+async function connectDevice(device) {
   onScreenLog('Device selected: ' + device.name);
 
   if (!device) {
@@ -112,46 +98,38 @@ function connectDevice(device) {
   } else if (connectingUUIDSet.has(device.id) || connectedUUIDSet.has(device.id)) {
     onScreenLog('Already connected to this device.');
   } else {
+    const board = new ThingsDevBoard(device);
     connectingUUIDSet.add(device.id);
-    initializeCardForDevice(device);
+    
+    try {
+      initializeCardForDevice(board);
 
-    // Wait until the requestDevice call finishes before setting up the disconnect listner
-    const disconnectCallback = () => {
-      updateConnectionStatus(device, 'disconnected');
-      device.removeEventListener('gattserverdisconnected', disconnectCallback);
-    };
-    device.addEventListener('gattserverdisconnected', disconnectCallback);
+      // Wait until the requestDevice call finishes before setting up the disconnect listner
+      const disconnectCallback = () => {
+        updateConnectionStatus(device, 'disconnected');
+        device.removeEventListener('gattserverdisconnected', disconnectCallback);
+      };
+      device.addEventListener('gattserverdisconnected', disconnectCallback);
 
-    onScreenLog('Connecting ' + device.name);
-    device.gatt.connect().then(() => {
+      onScreenLog('Connecting ' + device.name);
+      await board.connect();
+
+      // Check dev board firmware version
+      await versionCheck(board);
+
       updateConnectionStatus(device, 'connected');
-      connectingUUIDSet.delete(device.id);
-
-      const things = new ThingsIo(
-        device,
-        DEVBOARD_SERVICE_UUID,
-        VERSION_CHARACTERISTIC_UUID,
-        WRITE_BOARD_STATE_CHARACTERISTIC_UUID,
-        COMMAND_WRITE_CHARACTERISTIC_UUID,
-        COMMAND_RESPONSE_CHARACTERISTIC_UUID,
-        NOTIFY_SW_CHARACTERISTIC_UUID,
-        NOTIFY_TEMP_CHARACTERISTIC_UUID
-      );
-
-      //Check Version
-      versionCheck(things);
-
-    }).catch(e => {
-      flashSDKError(e);
-      onScreenLog(`ERROR on gatt.connect(${device.id}): ${e}`);
+    } catch (e) {
       updateConnectionStatus(device, 'error');
+      onScreenLog(`Connecting device failed: ${e}\n${e.stack}`);
+    } finally {
       connectingUUIDSet.delete(device.id);
-    });
+    }
   }
 }
 
 // Setup device information card
-function initializeCardForDevice(device) {
+function initializeCardForDevice(board) {
+  const device = board.device;
   const template = document.getElementById('device-template').cloneNode(true);
   const cardId = 'device-' + device.id;
 
@@ -159,138 +137,131 @@ function initializeCardForDevice(device) {
   template.setAttribute('id', cardId);
   template.querySelector('.card > .card-header > .device-name').innerText = device.name;
 
-  const things = new ThingsIo(
-    device,
-    DEVBOARD_SERVICE_UUID,
-    VERSION_CHARACTERISTIC_UUID,
-    WRITE_BOARD_STATE_CHARACTERISTIC_UUID,
-    COMMAND_WRITE_CHARACTERISTIC_UUID,
-    COMMAND_RESPONSE_CHARACTERISTIC_UUID,
-    NOTIFY_SW_CHARACTERISTIC_UUID,
-    NOTIFY_TEMP_CHARACTERISTIC_UUID
-  );
-
   // Device disconnect button
   template.querySelector('.device-disconnect').addEventListener('click', () => {
     onScreenLog('Clicked disconnect button');
     device.gatt.disconnect();
   });
 
-  template.querySelector('.device-read').addEventListener('click', () => {
-    let valueBuffer = things.deviceRead().catch(e => `ERROR on deviceRead(): ${e}\n${e.stack}`);
-    getDeviceReadData(device).innerText = String(things.valueRead());
+  template.querySelector('.device-read').addEventListener('click', async () => {
+    const values = await board.deviceRead().catch(e => onScreenLog(`ERROR on deviceRead(): ${e}\n${e.stack}`));
+    if (values) {
+      getDeviceReadData(device).innerText = buf2hex(values.buffer);
+    }
   });
 
   template.querySelector('.textctrl-write').addEventListener('click', () => {
-    things.displayControl(
+    board.displayControl(
       parseInt(template.querySelector('.displayaddress_x').value, 16),
       parseInt(template.querySelector('.displayaddress_y').value, 16)
-    ).catch(e => `ERROR on displayControl(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on displayControl(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.textsize-write').addEventListener('click', () => {
-    things.displayFontSize(
+    board.displayFontSize(
       parseInt(template.querySelector('.textsize').value, 16)
-    ).catch(e => `ERROR on displayFontSize(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on displayFontSize(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.text-write').addEventListener('click', () => {
-    things.displayWrite(
+    board.displayWrite(
       template.querySelector('.display_text').value
-    ).catch(e => `ERROR on displayWrite(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on displayWrite(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.text-clear').addEventListener('click', () => {
-    things.displayClear().catch(e => `ERROR on displayClear(): ${e}\n${e.stack}`);
+    board.displayClear().catch(e => onScreenLog(`ERROR on displayClear(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.led-write').addEventListener('click', () => {
-    things.ledWrite(
+    board.ledWrite(
       parseInt(template.querySelector('.led-port').value, 16),
       parseInt(template.querySelector('.led-value').value, 16)
-    ).catch(e => `ERROR on writeLed(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on writeLed(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.buzzer-write').addEventListener('click', () => {
-    things.buzzerControl(
+    board.buzzerControl(
       parseInt(template.querySelector('.buzzer-control').value, 16)
-    ).catch(e => `ERROR on buzzerControl(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on buzzerControl(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.gpio-direction').addEventListener('click', () => {
-    things.gpioPinMode(
+    board.gpioPinMode(
       parseInt(template.querySelector('.gpio-direction-port').value, 16),
       parseInt(template.querySelector('.gpio-direction-dir').value, 16)
-    ).catch(e => `ERROR on gpioPinMode(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on gpioPinMode(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.gpio-dwrite').addEventListener('click', () => {
-    things.gpioDigitalWrite(
+    board.gpioDigitalWrite(
       parseInt(template.querySelector('.gpio-digitalwrite-port').value, 16),
       parseInt(template.querySelector('.gpio-digitalwrite-value').value, 16)
-    ).catch(e => `ERROR on gpioDirigtalWrite(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on gpioDirigtalWrite(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.gpio-awrite').addEventListener('click', () => {
-    things.gpioAnalogWrite(
+    board.gpioAnalogWrite(
       parseInt(template.querySelector('.gpio-awrite-port').value, 16),
       parseInt(template.querySelector('.gpio-awrite-value').value, 16)
-    ).catch(e => `ERROR on gpioAnalogWrite(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on gpioAnalogWrite(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.i2c-start').addEventListener('click', () => {
-    things.i2cStartTransaction(
+    board.i2cStartTransaction(
       parseInt(template.querySelector('.i2c-start-addr').value, 16),
-    ).catch(e => `ERROR on i2cStartTransaction(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on i2cStartTransaction(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.i2c-write').addEventListener('click', () => {
-    things.i2cWrite(
+    board.i2cWrite(
       parseInt(template.querySelector('.i2c-write-data').value, 16),
-    ).catch(e => `ERROR on i2cWrite(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on i2cWrite(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.i2c-stop').addEventListener('click', () => {
-    things.i2cStopTransaction().catch(e => `ERROR on i2cStopTransaction(): ${e}\n${e.stack}`);
+    board.i2cStopTransaction()
+      .catch(e => onScreenLog(`ERROR on i2cStopTransaction(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.i2c-request').addEventListener('click', () => {
-    things.i2cRequestFrom(
+    board.i2cRequestFrom(
       parseInt(template.querySelector('.i2c-request-addr').value, 16),
-    ).catch(e => `ERROR on i2cRequestFrom(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on i2cRequestFrom(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.i2c-readreq').addEventListener('click', () => {
-    things.i2cReadRequest().catch(e => `ERROR on i2cReadRequest(): ${e}\n${e.stack}`);
+    board.i2cReadRequest()
+      .catch(e => onScreenLog(`ERROR on i2cReadRequest(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.gpio-dreadreq').addEventListener('click', () => {
-    things.gpioDigitalReadReq(
+    board.gpioDigitalReadReq(
       parseInt(template.querySelector('.gpio-dreadreq-port').value, 16),
-    ).catch(e => `ERROR on gpioDigitalReadReq(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on gpioDigitalReadReq(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.gpio-areadreq').addEventListener('click', () => {
-    things.gpioAnalogReadReq(
+    board.gpioAnalogReadReq(
       parseInt(template.querySelector('.gpio-areadreq-port').value, 16),
-    ).catch(e => `ERROR on gpioAnalogReadReq(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on gpioAnalogReadReq(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.read-buffer-write').addEventListener('click', () => {
-    things.readReq(
+    board.readReq(
       parseInt(template.querySelector('.read-buffer-source').value, 16),
-    ).catch(e => `ERROR on readReq(): ${e}\n${e.stack}`);
+    ).catch(e => onScreenLog(`ERROR on readReq(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.setuuid').addEventListener('click', () => {
     onScreenLog(`Write new Service UUID`);
-    things.writeAdvertUuid(
+    board.writeAdvertUuid(
       template.querySelector('.uuid_text').value
     ).catch(e => onScreenLog(`ERROR on writeAdvertuuid(): ${e}\n${e.stack}`));
   });
 
   template.querySelector('.notify-sw-enable').addEventListener('click', () => {
-    things.swNotifyEnable(
+    board.swNotifyEnable(
       parseInt(template.querySelector('.notify-sw-source').value, 16), //Select Switch
       parseInt(template.querySelector('.notify-sw-mode').value, 16), //mode
       parseInt(template.querySelector('.notify-sw-interval').value, 16), //Interval
@@ -300,18 +271,18 @@ function initializeCardForDevice(device) {
 
 
   template.querySelector('.notify-temp-enable').addEventListener('click', () => {
-    things.tempNotifyEnable(
+    board.tempNotifyEnable(
       parseInt(template.querySelector('.notify-temp-interval').value, 16), //Interval
       notificationTempCallback //callback
     ).catch(e => onScreenLog(`Temperature Notify set error`));
   });
 
   template.querySelector('.notify-sw-disable').addEventListener('click', () => {
-    things.swNotifyDisable().catch(e => onScreenLog(`SW Notify disable error`));
+    board.swNotifyDisable().catch(e => onScreenLog(`SW Notify disable error`));
   });
 
   template.querySelector('.notify-temp-disable').addEventListener('click', () => {
-    things.tempNotifyDisable().catch(e => onScreenLog(`Temperature Notify disable error`));
+    board.tempNotifyDisable().catch(e => onScreenLog(`Temperature Notify disable error`));
   });
 
   // Tabs
@@ -348,11 +319,8 @@ function notificationTempCallback(e) {
 }
 
 //Version Check
-async function versionCheck(things) {
-  await sleep(500);
-  await things.deviceVersionRead().catch(e => onScreenLog('Version read error'));
-  await sleep(100);
-  const version = things.versionRead();
+async function versionCheck(board) {
+  const version = await board.deviceVersionRead();
   if (version > 1) {
     onScreenLog('Firmware Version : ' + version);
   } else {
@@ -394,7 +362,6 @@ function updateConnectionStatus(device, status) {
     document.getElementById(device.id).classList.remove('active');
   }
 }
-
 
 function getDeviceCard(device) {
   return document.getElementById('device-' + device.id);
@@ -438,5 +405,5 @@ function sleep(ms) {
 }
 
 function buf2hex(buffer) { // buffer is an ArrayBuffer
-  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join(' ');
 }

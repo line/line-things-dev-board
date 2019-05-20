@@ -12,10 +12,10 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
 
 ### [重要] Groveコネクタを使う方への注意点
 
-本体のみ使用する場合は問題ありませんが、 **Groveコネクタの基板の説明に間違え** があります。
+本体のみ使用する場合は問題ありませんが、 **Groveコネクタの基板の説明に間違い** があります。
 
-* 基板上のP7とP8は説明が逆になっています。正しくはP7はGrove-I/Oで、P8がGrove-UARTです。
-* 基板上の説明ではP6にGrove-I2C 5Vと記載されていますが、正しくはP6がI2C(3.3V)、P2がI2C(5V)となります。
+* 基板上の**P7**と**P8**は説明が逆になっています。正しくは**P7**はGrove-I/Oで、**P8**がGrove-UARTです。
+* 基板上の説明では**P6**にGrove-I2C 5Vと記載されていますが、正しくは**P6**がI2C(3.3V)、**P2**がI2C(5V)となります。
 
 ## Quick Start
 予め書かれているファームウェアで、LINE Thingsの機能とボード上に搭載されたデバイスの体験をすることができます。
@@ -33,7 +33,7 @@ LINE Things上でモーターを除くすべてのデバイスの状態を取得
 この機能を用いると、例えば任意のタイミングでデバイスからNotifyさせたり、各種センサの値を任意に設定したり、取得することが可能です。
 
 デフォルトファームウェアの仕様については、[デフォルトファームウェアについて](docs/default-firmware.md)を参照してください。
-JavaScriptライブラリについては、[JavaScript から LINE Things Board を制御する](https://line.github.io/line-things-dev-board/liff-app/js-control/)を参照してください。
+JavaScriptライブラリについては、[JavaScript から LINE Things Board を制御する](docs/js-control.md)を参照してください。
 デフォルトファームウェアを利用したLIFFは `liff-app/linethings-dev-default/` と `liff-app/linethings-js-control/` に格納されています。
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。

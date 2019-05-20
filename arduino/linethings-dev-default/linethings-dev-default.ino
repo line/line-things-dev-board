@@ -399,7 +399,7 @@ volatile bleNotifyAction g_notify_sw = {
   .changed = 1, .source = 3, .level = 0, .mode = 1, .interval = 50
 };
 volatile bleNotifyAction g_notify_temp = {
-  .changed = 1, .source = 1, .level = 0, .mode = 1, .interval = 10000
+  .changed = 1, .source = 1, .level = 0, .mode = 0, .interval = 10000
 };
 
 volatile int g_display_user_mode = 0;

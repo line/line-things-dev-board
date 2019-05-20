@@ -1,4 +1,3 @@
-
 # LINE Things development board
 LINE Things development boardは、[Nordic Semiconductor nRF52832](https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF52832)を搭載している[Raytac MDBT42Q](http://www.raytac.com/product/ins.php?index_id=31)モジュールを搭載したLINE Things実験用ボードです。
 CPUボードとマザーボードの2つの基板から構成されています。組み合わせることで動作検証をすることや、CPUボードは単体でもブレッドボード等を使って実験を行うことが可能です。
@@ -11,14 +10,12 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
 - [LINE Things - LINE Developers](https://developers.line.biz/ja/docs/line-things/)
 - [LINE Things Starter](https://github.com/line/line-things-starter)
 
-## [重要] Groveコネクタを使う方への注意点
+### [重要] Groveコネクタを使う方への注意点
 
 本体のみ使用する場合は問題ありませんが、 **Groveコネクタの基板の説明に間違え** があります。
 
 * 基板上のP7とP8は説明が逆になっています。正しくはP7はGrove-I/Oで、P8がGrove-UARTです。
 * 基板上の説明ではP6にGrove-I2C 5Vと記載されていますが、正しくはP6がI2C(3.3V)、P2がI2C(5V)となります。
-
----
 
 ## Quick Start
 予め書かれているファームウェアで、LINE Thingsの機能とボード上に搭載されたデバイスの体験をすることができます。
@@ -119,6 +116,8 @@ USB接続の場合はUSBケーブルを抜いてください。
  * 外部電源を使用する場合は必ず電圧と極性を確認してください。
  * 一部パターンのみ用意されていて、はんだ付けされていない部品があります。必要に応じて適宜追加してください。
 
+---
+
 ## ハードウェア構成
 ### CPUボード
 ![CPU Board](img/cpuboard.jpg)
@@ -156,8 +155,6 @@ CPUボード単体での仕様です。マザーボードに接続して使用�
 | 動作可能電圧(外部供給) | 5V |
 | 最大連続消費電流(電池駆動/モーター未使用) | 0.6A |
 | 最大連続消費電流(モーター使用時) | 2.6A |
-
----
 
 ## マザーボード搭載デバイス
 5V系統と記載があるものは電池駆動では使用できません。外部電源を使用するかUSB接続で使用する必要があります。また、GroveコネクタやGPIOにて3.3V駆動デバイスに5V系統を接続したり、
@@ -323,8 +320,6 @@ SparkFun MMA8452Q Accelerometerライブラリを使うと簡単な制御で使�
 * 15, 17ピンはUART端子に接続されています。このピンはファームウェアの書き込み等でも使用しているため、汎用I/OではなくUARTピンとして使用することを強くおすすめします。
 * 16, 18ピンはボード上でLED端子に接続されています。そのため、基本的にOutput端子として使用してください。
 
----
-
 ## 回路図・アートワーク図
 - CPU ボード
     - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/schematic.pdf)
@@ -343,8 +338,6 @@ SparkFun MMA8452Q Accelerometerライブラリを使うと簡単な制御で使�
 基板製造に必要なガーバーデータがここに格納されています。実装に必要な部品リストは bom_{cpu/main}_board.xls を使用してください。
 なお、回路図及び基板データは Altium 社の Circuit Studio でデザインしています。設計データを変更する場合、Circuit Studio から開いてください。
 https://www.altium.com/circuitstudio/
-
----
 
 ## 拡張
 ### モータードライバ

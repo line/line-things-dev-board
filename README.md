@@ -29,20 +29,23 @@ LINE Things上でモーターを除くすべてのデバイスの状態を取得
 ### 初めてLINE Thingsを使用する方
 初めてLINE Thingsを使用する場合、まずはLINEアプリ内のQRコードリーダーでCPU基板の裏側、またはマザーボード基板にあるQRコードを読み取って利用規約に同意してください。
 
-### 初期ファームウェアの機能を使う
-ファームウェアを書き換えることなく、LIFFからLINEデバイスの挙動をより高度にコントロールする機能も用意しています。
+![](https://developers.line.biz/media/line-things/qr_code-311f3503.png)
+
+### デフォルトファームウェアの機能を使う
+デフォルトファームウェアでは、ファームウェアを書き換えることなく、LIFFからLINEデバイスの挙動をより高度にコントロールする機能も用意しています。
 この機能を用いると、例えば任意のタイミングでデバイスからNotifyさせたり、各種センサの値を任意に設定したり、取得することが可能です。
-これらの使い方は[JavaScript から LINE Things Board を制御する](https://line.github.io/line-things-dev-board/liff-app/js-control/)を参照してください。
+
+デフォルトファームウェアの仕様については、[デフォルトファームウェアについて](docs/default-firmware.md)を参照してください。
+JavaScriptライブラリについては、[JavaScript から LINE Things Board を制御する](https://line.github.io/line-things-dev-board/liff-app/js-control/)を参照してください。
+デフォルトファームウェアを利用したLIFFは `liff-app/linethings-dev-default/` と `liff-app/linethings-js-control/` に格納されています。
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。
 この機能は LINE Developers から Service UUID を取得して、LINE Things developers trial の独自デバイスを構築する際に、
-  ファームウェアと LIFF を変更することなく独自のデバイスとして使用することを目的とした機能です。
-
-このサンプルで使用しているLIFFは `liff-app/linethings-dev-default/` に格納されています。
+ファームウェアと LIFF を変更することなく独自のデバイスとして使用することを目的とした機能です。
 
 #### LIFFからService UUIDの変更と初期化
 LINE Things Developer Trialでは、プロダクト登録とそれに対応したGATT Service UUIDの設定が必要です。
-初期状態のファームウェアと LIFF (linethings-dev-default) では、LIFF上からService UUIDを書き換えることが可能です。
+デフォルトファームウェアと LIFF (liff-app/linethings-dev-default/) では、LIFF上からService UUIDを書き換えることが可能です。
 この機能を用いると、Service UUIDの書換の際にデバイスのファームウェアの書き換えが不要となります。
 
 ##### LIFFからService UUIDを書き換える
@@ -55,7 +58,6 @@ Dev boardのディスプレイに「BLE advertising uuid changed from LIFF....�
 ##### Service UUIDを初期状態に戻す
 電源が入っている状態で、マザーボード上のSW1タクトスイッチを押しながら、CPUボード上のリセットボタンを押してください。
 起動時に `Set advertising packet UUID to default.` とディスプレイに表示されたら成功です。
-
 
 ### ファームウェアをカスタマイズする
 [Adafruitがオープンソースで公開しているArduinoコア](https://github.com/adafruit/Adafruit_nRF52_Arduino)を利用して、Arduino IDEから簡単に開発することが可能です。
@@ -323,7 +325,7 @@ SparkFun MMA8452Q Accelerometerライブラリを使うと簡単な制御で使�
 
 ---
 
-# 回路図・アートワーク図
+## 回路図・アートワーク図
 - CPU ボード
     - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/schematic.pdf)
     - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/pcb_top.pdf)
@@ -333,7 +335,7 @@ SparkFun MMA8452Q Accelerometerライブラリを使うと簡単な制御で使�
     - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_top.pdf)
     - [アートワーク図 - 裏](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_bottom.pdf)
 
-## 自分で基板を製造したい
+### 自分で基板を製造したい
 `/cpu_board/Outputs/`
 
 `/main_board/Outputs/`
@@ -344,8 +346,8 @@ https://www.altium.com/circuitstudio/
 
 ---
 
-# 拡張
-## モータードライバ
+## 拡張
+### モータードライバ
 マザーボードはモータードライバが実装されていないため、そのままではモーターを使用することができません。
 モーターを使用したい場合は *R18* (0オーム)を取り外して、以下の部品を新規に追加実装してください。
 
@@ -365,37 +367,11 @@ DRV8830DGQRは裏のGNDパッドを基板の裏側からハンダを流しては
 | CN1 | コネクタ | JST-XH-02P |
 | CN2 | コネクタ | JST-XH-02P |
 
-## 電源 / Groveコネクタ
+### 電源 / Groveコネクタ
 電源コネクタはJST-XH-02Pコネクタを使用しています。Groveコネクタは4Pの標準のものを使用しています。
 
-## 電池ボックス
+### 電池ボックス
 電池ボックスは共立電子産業さん、または秋月電子通商さんにて購入可能な単4電池ボックスを2つ使用しています。
 
 - http://eleshop.jp/shop/g/g6CM128/
 - http://akizukidenshi.com/catalog/g/gP-02670/
-
----
-
-## デフォルトファームウェアとLIFFの改良
-使用しているUUID一覧は図の通りです。
-
-|説明 | 名称 | UUID | 使用先 |
-----|----|----|----
-| 1  | DEVBOARD_SERVICE_UUID | f2b742dc-35e3-4e55-9def-0ce4a209c552 |  |
-| 2 | NOTIFY_BOARD_STATE_CHARACTERISTIC_UUID | e90b4b4e-f18a-44f0-8691-b041c7fe57f2 | liff-app/linethings-dev-default/ |
-| 3 | WRITE_BOARD_STATE_CHARACTERISTIC_UUID | 4f2596d7-b3d6-4102-85a2-947b80ab4c6f | liff-app/linethings-dev-default/, liff-app/js-control/ |
-| 4 | VERSION_CHARACTERISTIC_UUID | be25a3fe-92cd-41af-aeee-0a9097570815 | liff-app/js-control/ |
-| 5 | NOTIFY_SW_CHARACTERISTIC_UUID | a11bd5c0-e7da-4015-869b-d5c0087d3cc4 | liff-app/js-control/ |
-| 6 | NOTIFY_TEMP_CHARACTERISTIC_UUID | fe9b11a8-5f98-40d6-ae82-bea94816277f | liff-app/js-control/ |
-| 7 | COMMAND_RESPONSE_CHARACTERISTIC_UUID | 1737f2f4-c3d3-453b-a1a6-9efe69cc944f | liff-app/js-control/ |
-| 8 | COMMAND_WRITE_CHARACTERISTIC_UUID | 5136e866-d081-47d3-aabc-a2c9518bacd4 | liff-app/js-control/ |
-
-
-1. Dev boardのService UUID。
-2. デバイス上のスイッチ、温度、加速度などの情報を定期的にnotifyしています。
-3. LIFF上からのUUIDの書き換えと、`liff-app/linethings-dev-default/`からはデバイスのLEDやブザーの制御を行います。
-4. Firmwareのバージョンを示すキャラクタリスティックです。
-5. LIFFから指定された任意の設定でスイッチのNotifyを行います。
-6. LIFFから指定された任意の設定で温度のNotifyを行います。
-7. LIFFから指定された任意のタイミングでスイッチやIO、加速度、温度などの値を読み込みます。
-8. LIFFから任意のタイミングでデバイスへ値を書き込みます。

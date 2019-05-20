@@ -1,12 +1,3 @@
-const DEFAULT_SERVICE_UUID = "f2b742dc-35e3-4e55-9def-0ce4a209c552";
-const DEFAULT_CHARACTERISTIC_NOTIFY_UUID = "e90b4b4e-f18a-44f0-8691-b041c7fe57f2";
-const DEFAULT_CHARACTERISTIC_WRITE_UUID = "4f2596d7-b3d6-4102-85a2-947b80ab4c6f";
-const DEFAULT_CHARACTERISTIC_VERSION_UUID = "be25a3fe-92cd-41af-aeee-0a9097570815";
-const DEFAULT_CHARACTERISTIC_IO_WRITE_UUID = "5136e866-d081-47d3-aabc-a2c9518bacd4";
-const DEFAULT_CHARACTERISTIC_IO_READ_UUID = "1737f2f4-c3d3-453b-a1a6-9efe69cc944f";
-const DEFAULT_CHARACTERISTIC_IO_NOTIFY_SW_UUID = "a11bd5c0-e7da-4015-869b-d5c0087d3cc4";
-const DEFAULT_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID = "fe9b11a8-5f98-40d6-ae82-bea94816277f";
-
 const deviceUUIDSet = new Set();
 const connectedUUIDSet = new Set();
 const connectingUUIDSet = new Set();
@@ -124,25 +115,15 @@ function connectDevice(device) {
     device.addEventListener('gattserverdisconnected', disconnectCallback);
 
     onScreenLog('Connecting ' + device.name);
-    device.gatt.connect().then(() => {
+
+    const things = new ThingsDevBoard(device);
+    things.connect().then(() => {
       updateConnectionStatus(device, 'connected');
       connectingUUIDSet.delete(device.id);
 
-      const things = new ThingsIo(
-        device,
-        DEFAULT_SERVICE_UUID,
-        DEFAULT_CHARACTERISTIC_VERSION_UUID,
-        DEFAULT_CHARACTERISTIC_WRITE_UUID,
-        DEFAULT_CHARACTERISTIC_IO_WRITE_UUID,
-        DEFAULT_CHARACTERISTIC_IO_READ_UUID,
-        DEFAULT_CHARACTERISTIC_IO_NOTIFY_SW_UUID,
-        DEFAULT_CHARACTERISTIC_IO_NOTIFY_TEMP_UUID
-      );
-
-      //Check Version
       versionCheck(things);
-      //Device Setup
       setup(things);
+      loop(things);
     }).catch(e => {
       flashSDKError(e);
       onScreenLog(`ERROR on gatt.connect(${device.id}): ${e}`);
@@ -153,10 +134,8 @@ function connectDevice(device) {
 }
 
 //Version Check
-async function versionCheck(things) {
-  await things.deviceVersionRead().catch(e => onScreenLog('Version read error'));
-  await sleep(100);
-  const version = things.versionRead();
+async function versionCheck(board) {
+  const version = await board.deviceVersionRead();
   if (version > 1) {
     onScreenLog('Firmware Version : ' + version);
   } else {
@@ -171,16 +150,6 @@ async function setup(things) {
   await things.displayControl(0, 0).catch(e => onScreenLog(`display control error`));
   await things.displayWrite("Hello world").catch(e => onScreenLog(`display write error`));
 
-  await sleep(1000);
-  await things.displayClear().catch(e => onScreenLog(`display clear error`));
-  await things.displayControl(0, 0).catch(e => onScreenLog(`display control error`));
-  //await sleep(100);
-  await things.displayWrite("Enjoy ").catch(e => onScreenLog(`display write error`));
-  await sleep(1000);
-  await things.displayWrite("LINE Things ").catch(e => onScreenLog(`display write error`));
-  await sleep(1000);
-  await things.displayWrite("Developer trial").catch(e => onScreenLog(`display write error`));
-
   // Initial LED
   await things.ledWrite(2, 1).catch(e => `error: ${e}\n${e.stack}`);
   await things.ledWrite(3, 1).catch(e => `error: ${e}\n${e.stack}`);
@@ -188,6 +157,15 @@ async function setup(things) {
   await things.ledWrite(5, 1).catch(e => `error: ${e}\n${e.stack}`);
 }
 
+async function loop(things) {
+  while (true) {
+    // Write LED
+    await things.ledWriteByte(0).catch(e => `error: ${e}\n${e.stack}`);
+    await sleep(1000);
+    await things.ledWriteByte(0xff).catch(e => `error: ${e}\n${e.stack}`);
+    await sleep(1000);
+  }
+}
 
 // Setup device information card
 function initializeCardForDevice(device) {
@@ -260,9 +238,6 @@ function updateConnectionStatus(device, status) {
     document.getElementById(device.id).classList.remove('active');
   }
 }
-
-
-
 
 function getDeviceCard(device) {
   return document.getElementById('device-' + device.id);

@@ -333,7 +333,6 @@ SparkFun MMA8452Q Accelerometerライブラリを使うと簡単な制御で使�
 
 ### 自分で基板を製造したい
 `/cpu_board/Outputs/`
-
 `/main_board/Outputs/`
 
 基板製造に必要なガーバーデータがここに格納されています。実装に必要な部品リストは bom_{cpu/main}_board.xls を使用してください。

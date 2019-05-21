@@ -102,7 +102,7 @@ Starter のリポジトリから、LINE Things dev board 用のファームウ�
 USB接続の場合はUSBケーブルを抜いてください。
 電源の設定は *P4* ピンで行うことができます。上側に設定することで外部電源及びUSB駆動、下側を設定すると電池駆動になります。
 
-![Power select](img/motherboard_power.png)
+![motherboard_power](https://user-images.githubusercontent.com/135050/58088659-1d993400-7bfe-11e9-8bd1-298ff1bf8d40.jpg)
 
  * 外部電源及びUSB駆動
    * *P4* を写真のように正面から見て上側に設定してください。
@@ -126,7 +126,7 @@ USB接続の場合はUSBケーブルを抜いてください。
 
 ## 使用上の注意
 ### CPUボード
-![CPU Board](img/motherboard_direction.jpg)
+![motherboard_direction](https://user-images.githubusercontent.com/135050/58088649-16722600-7bfe-11e9-8b84-82e1e9dbd65e.jpg)
 
  * マザーボードに差し込む場合は必ず方向を間違えないように確認してください。
  * CPUボードを単体で使用する場合、安定したBLEの通信を行うため、アンテナが配置されている側をなるべくGNDや他の電極パターンに近づけないでください。ブレッドボード上に配置する場合は、アンテナをブレッドボードの端になるようにしてください。
@@ -144,14 +144,14 @@ USB接続の場合はUSBケーブルを抜いてください。
 
 ## ハードウェア構成
 ### CPUボード
-![CPU Board](img/cpuboard.jpg)
+![cpuboard](https://user-images.githubusercontent.com/135050/58088657-1bcf7080-7bfe-11e9-89f4-5e6bbde1a363.jpg)
 
 [Raytac MDBT42Q](http://www.raytac.com/product/ins.php?index_id=31)モジュールを搭載しています。
 AdafruitのArduinoコアを利用可能でArduino IDEを使用して開発することができ、J-LINKなどから利用できるJTAG(SWD)ポートを用意しているので、
 Arduinoではなくご自身でフルスクラッチ開発も可能となっています。マザーボードに挿して使用することも、CPUボード単体で使用することも可能です。
 
 #### ピンアサイン
-![CPU Board](img/cpuboard_pinassign.png)
+![cpuboard_pinassign](https://user-images.githubusercontent.com/135050/58088655-1a9e4380-7bfe-11e9-90d4-530f84e56242.png)
 
 #### 技術仕様
 CPUボード単体での仕様です。マザーボードに接続して使用する場合、そちらの仕様が適用されます。
@@ -164,7 +164,7 @@ CPUボード単体での仕様です。マザーボードに接続して使用�
 | RAMサイズ | 64KB |
 
 ### マザーボード
-![CPU Board](img/motherboard.jpg)
+![motherboard](https://user-images.githubusercontent.com/135050/58088621-078b7380-7bfe-11e9-8d0d-8d9c216770b4.jpg)
 
 マザーボード上にはLED、タクトスイッチ、温度センサやOLEDなどを搭載しています。
 使用する際はCPUボードを挿して使用します。**CPUボードを挿す際は向きに注意** してください。向きを間違うと

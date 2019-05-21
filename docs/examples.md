@@ -286,7 +286,7 @@ void loop() {
 ## マザーボード上以外のデバイスを使ったサンプルスケッチ
 
 ### フルカラー LED - NeoPixel
-![Neopixel](../img/neopixel.jpg)
+![neopixel](https://user-images.githubusercontent.com/135050/58088640-12de9f00-7bfe-11e9-8a8e-6c73594a59f3.jpg)
 
 一般的にNeopixelとよばれる、WS2812B搭載のフルカラーLEDを光らせるデモです。LEDの光の輝度を時間とともに0~100%でコントロールしています。マザーボード上の *SW1* を押すことでLEDの色を変えることができます。
 GPIOの1ピン(マイコン *IO2*)にNeopixelのIN端子を、GPIOの3番ピン(3.3V)を *VCC*、20番ピン(GND)を *GND* に接続します。本来WS2812Bは5Vで使用するものですが、3.3V電源でも一応動くことを確認しています。

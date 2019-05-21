@@ -27,7 +27,7 @@ Arduino IDE をインストールた後、必ずボードを **接続しない�
 4. Under Tools -> Port で正しいシリアルポートを選択してください *ie. COM1, /dev/cu.SLAB_USBtoUART*
 5. テストとして、一度空のスケッチをアップロードしてみましょう。エラーがでなければ問題ありません。
 
-![CPU Board](../img/motherboard_external.jpg)
+![motherboard_external](https://user-images.githubusercontent.com/135050/58088646-14a86280-7bfe-11e9-974d-d4925148f3ae.jpg)
 
 ### CPU基板単体で使用する - 市販されている書き込み機を使用(非推奨)
 DTR信号を出力できるアダプタであれば市販されているUSB-TTL変換アダプタ (CP2102搭載基板等) を使って書き込むことができます。この他に0.1uFのセラミックコンデンサが必要です。
@@ -46,7 +46,7 @@ DTR信号を出力できるアダプタであれば市販されているUSB-TTL�
 | RxD | P6 | |
 | TxD | P8 | |
 
-![CPU Board - 書き込み方法](../img/cpuboard_prog_external.jpg)
+![cpuboard_prog_external](https://user-images.githubusercontent.com/135050/58088653-18d48000-7bfe-11e9-9b5a-f9637b23e590.jpg)
 
 ## 詳しい人向け
 ### J-LINKでの書き込み
@@ -56,7 +56,7 @@ J-LINKを使うとより高レベルのデバッグや、Arduinoを使用しな�
 [Bootloaderを書き込む](#bootloaderを書き込む) を参考にして行ってください。
 
 #### 配線図
-![CPU Board](img/cpuboard_jlink.png)
+![cpuboard_jlink](https://user-images.githubusercontent.com/135050/58088636-1114db80-7bfe-11e9-8a03-2222d94d49c5.png)
 
 | コネクタピン番号 | ピン名称 |
 ----|----|

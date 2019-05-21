@@ -27,11 +27,11 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
   - [拡張](#拡張)
   - [回路図・アートワーク図](#回路図アートワーク図)
 - docs
-  - [デフォルトファームウェアについて](default-firmware.md)
-  - [JavaScript から LINE Things Board を制御する](js-control.md)
-  - [ファームウェア書き込み方法](update-firmware.md)
-  - [Arduino で利用できるサンプルコード](examples.md)
-  - [うまく動かない場合](trouble-shooting.md)
+  - [デフォルトファームウェアについて](docs/default-firmware.md)
+  - [JavaScript から LINE Things Board を制御する](docs/js-control.md)
+  - [ファームウェア書き込み方法](docs/update-firmware.md)
+  - [Arduino で利用できるサンプルコード](docs/examples.md)
+  - [うまく動かない場合](docs/trouble-shooting.md)
 
 ## Quick Start
 予め書かれているファームウェアで、LINE Thingsの機能とボード上に搭載されたデバイスの体験をすることができます。

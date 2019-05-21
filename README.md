@@ -8,7 +8,9 @@ CPUボードとマザーボードの2つの基板から構成されています�
 LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのページを参照してください。
 
 - [LINE Things - LINE Developers](https://developers.line.biz/ja/docs/line-things/)
-- [LINE Things Starter](https://github.com/line/line-things-starter)
+- [LINE Things dev board使用ハンズオン](https://qiita.com/cpulabs/items/3a37a70cfa41129cb024)
+- [LINE の IoT プラットフォーム LINE Things の Developer Trial を試してみる](https://engineering.linecorp.com/ja/blog/line-things-developer-trial/)
+- [LINE Things 自動通信機能がリリースされました & 使い方紹介](https://engineering.linecorp.com/ja/blog/line-things-automatic-communication/)
 
 ### [重要] Groveコネクタを使う方への注意点
 
@@ -18,6 +20,8 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
 * 基板上の**P7**と**P8**は説明が逆になっています。正しくは **P7** は Grove-I/O で、**P8** が Grove-UART です。
 
 ## 目次
+
+[Documentation on Github Pages](https://line.github.io/line-things-dev-board/)
 
 - README.md
   - [Quick Start](#quick-start)
@@ -59,7 +63,7 @@ JavaScriptライブラリについては、[JavaScript から LINE Things Board 
 
 #### LIFFからService UUIDの変更と初期化
 LINE Things Developer Trialでは、プロダクト登録とそれに対応したGATT Service UUIDの設定が必要です。
-デフォルトファームウェアと LIFF (liff-app/linethings-dev-default/) では、LIFF上からService UUIDを書き換えることが可能です。
+デフォルトファームウェアと LIFF (`liff-app/linethings-dev-default/`, `liff-app/linethings-js-control/`) では、LIFF上からService UUIDを書き換えることが可能です。
 この機能を用いると、Service UUIDの書換の際にデバイスのファームウェアの書き換えが不要となります。
 
 ##### LIFFからService UUIDを書き換える
@@ -82,6 +86,9 @@ Dev boardのディスプレイに「BLE advertising uuid changed from LIFF....�
 
 デフォルトファームウェアに戻したい場合には、`arduino/linethings-dev-default/linethings-dev-default.ino` を使用してください。
 このサンプルでは `things_temp_lib`、`SparkFun MMA8452Q Accelerometer`、`Adafruit SSD1306`、`Adafruit GFX Library` を使用しています。`things_temp_lib` は `library/things_temp_lib` をzipファイルに圧縮して、ライブラリをインクルードからインストールしてください。それ以外のライブラリはライブラリを管理からインストールしてください。
+
+[LINE Things Starter](https://github.com/line/line-things-starter) も、LINE Things dev board に対応しています。
+Starter のリポジトリから、LINE Things dev board 用のファームウェアを書き込んでください。
 
 ---
 

@@ -16,14 +16,14 @@ Arduino IDE をインストールた後、必ずボードを **接続しない�
 ### マザーボードにCPU基板を刺して使用する
 1. CPUボードがマザーボードに刺さっていることを確認してください
 2. USB端子(J1)にMicro-USBケーブルを使ってPCへ接続してください
-3. Tools -> Board のリストから **Adafruit Bluefruit nRF52 Feather** を選択してください
+3. Tools -> Board のリストから **Adafruit Bluefruit Feather nRF52832** を選択してください
 4. Under Tools -> Port で正しいシリアルポートを選択してください *ie. COM1, /dev/cu.SLAB_USBtoUART*
 5. テストとして、一度空のスケッチをアップロードしてみましょう。エラーがでなければ問題ありません。
 
 ### CPU基板単体で使用する - マザーボードの書き込み機を利用
 1. 下記図のようにCPUボードの *RxD*/*TxD*/*Reset*/*VCC*/*GND* ピンをジャンパ線などを使用してマザーボードに接続してください。ピンアサインはCPUボードのピンアサインを参照してください。
 2. USB端子(*J1*)にMicro-USBケーブルを使ってPCへ接続してください
-3. Tools -> Board のリストから **Adafruit Bluefruit nRF52 Feather** を選択してください
+3. Tools -> Board のリストから **Adafruit Bluefruit Feather nRF52832** を選択してください
 4. Under Tools -> Port で正しいシリアルポートを選択してください *ie. COM1, /dev/cu.SLAB_USBtoUART*
 5. テストとして、一度空のスケッチをアップロードしてみましょう。エラーがでなければ問題ありません。
 

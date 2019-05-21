@@ -8,14 +8,34 @@ CPUボードとマザーボードの2つの基板から構成されています�
 LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのページを参照してください。
 
 - [LINE Things - LINE Developers](https://developers.line.biz/ja/docs/line-things/)
-- [LINE Things Starter](https://github.com/line/line-things-starter)
+- [LINE Things dev board使用ハンズオン](https://qiita.com/cpulabs/items/3a37a70cfa41129cb024)
+- [LINE の IoT プラットフォーム LINE Things の Developer Trial を試してみる](https://engineering.linecorp.com/ja/blog/line-things-developer-trial/)
+- [LINE Things 自動通信機能がリリースされました & 使い方紹介](https://engineering.linecorp.com/ja/blog/line-things-automatic-communication/)
 
 ### [重要] Groveコネクタを使う方への注意点
 
 本体のみ使用する場合は問題ありませんが、 **Groveコネクタの基板の説明に間違い** があります。
 
-* 基板上の**P7**と**P8**は説明が逆になっています。正しくは**P7**はGrove-I/Oで、**P8**がGrove-UARTです。
-* 基板上の説明では**P6**にGrove-I2C 5Vと記載されていますが、正しくは**P6**がI2C(3.3V)、**P2**がI2C(5V)となります。
+* 基板上の**P2**と**P6**の説明が逆になっています。正しくは **P2** が I2C(5V) で、**P6** が I2C(3.3V) です。
+* 基板上の**P7**と**P8**は説明が逆になっています。正しくは **P7** は Grove-I/O で、**P8** が Grove-UART です。
+
+## 目次
+
+[Documentation on Github Pages](https://line.github.io/line-things-dev-board/)
+
+- README.md
+  - [Quick Start](#quick-start)
+  - [使用方法](#使用方法)
+  - [使用上の注意](#使用上の注意)
+  - [ハードウェア構成](#ハードウェア構成)
+  - [拡張](#拡張)
+  - [回路図・アートワーク図](#回路図アートワーク図)
+- docs
+  - [デフォルトファームウェアについて](docs/default-firmware.md)
+  - [JavaScript から LINE Things Board を制御する](docs/js-control.md)
+  - [ファームウェア書き込み方法](docs/update-firmware.md)
+  - [Arduino で利用できるサンプルコード](docs/examples.md)
+  - [うまく動かない場合](docs/trouble-shooting.md)
 
 ## Quick Start
 予め書かれているファームウェアで、LINE Thingsの機能とボード上に搭載されたデバイスの体験をすることができます。
@@ -43,7 +63,7 @@ JavaScriptライブラリについては、[JavaScript から LINE Things Board 
 
 #### LIFFからService UUIDの変更と初期化
 LINE Things Developer Trialでは、プロダクト登録とそれに対応したGATT Service UUIDの設定が必要です。
-デフォルトファームウェアと LIFF (liff-app/linethings-dev-default/) では、LIFF上からService UUIDを書き換えることが可能です。
+デフォルトファームウェアと LIFF (`liff-app/linethings-dev-default/`, `liff-app/linethings-js-control/`) では、LIFF上からService UUIDを書き換えることが可能です。
 この機能を用いると、Service UUIDの書換の際にデバイスのファームウェアの書き換えが不要となります。
 
 ##### LIFFからService UUIDを書き換える
@@ -61,11 +81,14 @@ Dev boardのディスプレイに「BLE advertising uuid changed from LIFF....�
 [Adafruitがオープンソースで公開しているArduinoコア](https://github.com/adafruit/Adafruit_nRF52_Arduino)を利用して、Arduino IDEから簡単に開発することが可能です。
 
 ハードウェアの仕様については、[ハードウェア構成](#ハードウェア構成)を参考にしてください。
-ファームウェアの書き込み方法に関しては[ファームウェア書き込み方法](#ファームウェア書き込み方法)を参考にしてください。
+ファームウェアの書き込み方法に関しては[ファームウェア書き込み方法](docs/update-firmware.md)を参考にしてください。
 サンプルコードについては、[サンプルコード](docs/examples.md)にそれぞれのデバイスを制御する方法を載せています。
 
 デフォルトファームウェアに戻したい場合には、`arduino/linethings-dev-default/linethings-dev-default.ino` を使用してください。
 このサンプルでは `things_temp_lib`、`SparkFun MMA8452Q Accelerometer`、`Adafruit SSD1306`、`Adafruit GFX Library` を使用しています。`things_temp_lib` は `library/things_temp_lib` をzipファイルに圧縮して、ライブラリをインクルードからインストールしてください。それ以外のライブラリはライブラリを管理からインストールしてください。
+
+[LINE Things Starter](https://github.com/line/line-things-starter) も、LINE Things dev board に対応しています。
+Starter のリポジトリから、LINE Things dev board 用のファームウェアを書き込んでください。
 
 ---
 
@@ -321,24 +344,6 @@ SparkFun MMA8452Q Accelerometerライブラリを使うと簡単な制御で使�
 * 15, 17ピンはUART端子に接続されています。このピンはファームウェアの書き込み等でも使用しているため、汎用I/OではなくUARTピンとして使用することを強くおすすめします。
 * 16, 18ピンはボード上でLED端子に接続されています。そのため、基本的にOutput端子として使用してください。
 
-## 回路図・アートワーク図
-- CPU ボード
-    - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/schematic.pdf)
-    - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/pcb_top.pdf)
-    - [アートワーク図 - 裏](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/pcb_bottom.pdf)
-- マザーボード
-    - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/schematic.pdf)
-    - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_top.pdf)
-    - [アートワーク図 - 裏](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_bottom.pdf)
-
-### 自分で基板を製造したい
-`/cpu_board/Outputs/`
-`/main_board/Outputs/`
-
-基板製造に必要なガーバーデータがここに格納されています。実装に必要な部品リストは bom_{cpu/main}_board.xls を使用してください。
-なお、回路図及び基板データは Altium 社の Circuit Studio でデザインしています。設計データを変更する場合、Circuit Studio から開いてください。
-https://www.altium.com/circuitstudio/
-
 ## 拡張
 ### モータードライバ
 マザーボードはモータードライバが実装されていないため、そのままではモーターを使用することができません。
@@ -368,3 +373,21 @@ DRV8830DGQRは裏のGNDパッドを基板の裏側からハンダを流しては
 
 - http://eleshop.jp/shop/g/g6CM128/
 - http://akizukidenshi.com/catalog/g/gP-02670/
+
+## 回路図・アートワーク図
+- CPU ボード
+    - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/schematic.pdf)
+    - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/pcb_top.pdf)
+    - [アートワーク図 - 裏](https://github.com/line/line-things-dev-board/blob/master/schematics/cpu_board/Outputs/pcb_bottom.pdf)
+- マザーボード
+    - [回路図](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/schematic.pdf)
+    - [アートワーク図 - 表](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_top.pdf)
+    - [アートワーク図 - 裏](https://github.com/line/line-things-dev-board/blob/master/schematics/main_board/Outputs/pcb_bottom.pdf)
+
+### 自分で基板を製造したい
+- [`/cpu_board/Outputs/`](/cpu_board/Outputs/)
+- [`/main_board/Outputs/`](/main_board/Outputs/)
+
+基板製造に必要なガーバーデータがここに格納されています。実装に必要な部品リストは bom_{cpu/main}_board.xls を使用してください。
+なお、回路図及び基板データは Altium 社の Circuit Studio でデザインしています。設計データを変更する場合、Circuit Studio から開いてください。
+https://www.altium.com/circuitstudio/

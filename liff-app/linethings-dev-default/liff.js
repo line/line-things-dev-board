@@ -192,19 +192,20 @@ function initializeCardForDevice(device) {
     template.querySelector('.io16_value').addEventListener('change', () => {
         updateLedState(device).catch(e => onScreenLog(`ERROR on updateLedState(): ${e}\n${e.stack}`));
     });
-
     // Device disconnect button
     template.querySelector('.device-disconnect').addEventListener('click', () => {
         onScreenLog('Clicked disconnect button');
         device.gatt.disconnect();
     });
-
+    // Set New advertising UUID
     template.querySelector('.setuuid').addEventListener('click', () => {
-
-        writeAdvertuuid(device, template.querySelector('.uuid_text').value).catch(e => onScreenLog(`ERROR on writeAdvertuuid(): ${e}\n${e.stack}`));
+        writeAdvertuuid(device, template.querySelector('.uuid_text').value).catch(e => {
+            onScreenLog(`ERROR on writeAdvertuuid(): ${e}\n${e.stack}`);
+            return false;
+        });
+        toggleSetuuid(device).catch(e => onScreenLog(`ERROR on toggleSetuuid(): ${e}\n${e.stack}`));
     });
-
-
+    // Notification enable button
     template.querySelector('.notification-enable').addEventListener('click', () => {
         toggleNotification(device).catch(e => onScreenLog(`ERROR on toggleNotification(): ${e}\n${e.stack}`));
     });
@@ -293,6 +294,18 @@ async function toggleNotification(device) {
         getDeviceNotificationButton(device).getElementsByClassName('fas')[0].classList.remove('fa-toggle-off');
         getDeviceNotificationButton(device).getElementsByClassName('fas')[0].classList.add('fa-toggle-on');
     }
+}
+
+async function toggleSetuuid(device) {
+    if (!connectedUUIDSet.has(device.id)) {
+        window.alert('Please connect to a device first');
+        onScreenLog('Please connect to a device first.');
+        return;
+    }
+    getDeviceSetuuidButton(device).classList.remove('btn-success');
+    getDeviceSetuuidButton(device).classList.add('btn-secondary');
+    window.alert('Push OK button on this dialog. Then push reset button on the MPU board.');
+    onScreenLog('BLE advertising uuid changed.');
 }
 
 async function enableNotification(characteristic, callback) {
@@ -429,7 +442,6 @@ async function writeAdvertuuid(device, uuid) {
   });
 }
 
-
 async function getCharacteristic(device, serviceId, characteristicId) {
     const service = await device.gatt.getPrimaryService(serviceId).catch(e => {
         flashSDKError(e);
@@ -484,6 +496,10 @@ function getDeviceStatusSw2(device) {
 
 function getDeviceNotificationButton(device) {
     return getDeviceCard(device).getElementsByClassName('notification-enable')[0];
+}
+
+function getDeviceSetuuidButton(device) {
+    return getDeviceCard(device).getElementsByClassName('setuuid')[0];
 }
 
 function renderVersionField() {

@@ -197,7 +197,7 @@ function initializeCardForDevice(device) {
         onScreenLog('Clicked disconnect button');
         device.gatt.disconnect();
     });
-    // Set New adertising UUID
+    // Set New advertising UUID
     template.querySelector('.setuuid').addEventListener('click', () => {
         writeAdvertuuid(device, template.querySelector('.uuid_text').value).catch(e => {
             onScreenLog(`ERROR on writeAdvertuuid(): ${e}\n${e.stack}`);
@@ -205,7 +205,7 @@ function initializeCardForDevice(device) {
         });
         toggleSetuuid(device).catch(e => onScreenLog(`ERROR on toggleSetuuid(): ${e}\n${e.stack}`));
     });
-    // Nortification enable button
+    // Notification enable button
     template.querySelector('.notification-enable').addEventListener('click', () => {
         toggleNotification(device).catch(e => onScreenLog(`ERROR on toggleNotification(): ${e}\n${e.stack}`));
     });

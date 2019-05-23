@@ -1092,7 +1092,7 @@ void loop() {
 
   bool refresh_display = g_flag_display && !g_display_user_mode && !g_i2c_user_mode;
   bool notify_sensor = g_flag_notify && blech_notify_board_state.notifyEnabled();
-  
+
   float temperature;
   // Read sensor value
   if (!g_i2c_user_mode && (refresh_display || notify_sensor)) {

@@ -1,12 +1,13 @@
 Designator Footprint               Mid X         Mid Y         Ref X         Ref Y         Pad X         Pad Y TB      Rotation Comment        
 
+U3         QFN16S-0.5         2263.78mil   1182.087mil    2263.78mil   1181.102mil   2199.803mil   1220.473mil  T          0.00 MMA8452Q       
+C17        2012[0805]         472.441mil    787.402mil    472.441mil    787.402mil    435.039mil    787.402mil  T          0.00 Cap1           
 M4         BH-4-4P           3267.716mil   2007.874mil   3267.716mil   2007.874mil    2381.89mil   2007.874mil  T        360.00 BH-4-4P        
 M3         BH-4-4P           1259.842mil   2007.874mil   1259.842mil   2007.874mil    374.016mil   2007.874mil  T        360.00 BH-4-4P        
 U7         SOT23-5            905.512mil     236.22mil    905.512mil     236.22mil    858.268mil    273.622mil  T          0.00 AP2112         
 U6         SOT23-3            905.512mil    433.071mil    905.512mil    433.071mil     868.11mil    386.811mil  T        360.00 DMG3415        
 U5         QFN28-0.5          748.031mil    708.661mil    748.031mil    708.661mil    646.657mil    767.716mil  T          0.00 CP2102N        
 U4         SOIC8             3551.181mil    535.433mil   3551.181mil    535.433mil   3454.724mil    610.433mil  T          0.00 AT30TS74       
-U3         QFN16S-0.5         2263.78mil   1182.086mil    2263.78mil   1181.102mil   2194.882mil   1220.472mil  T          0.00 MMA8452Q       
 SW3        MSK-12C01-07       120.079mil   1062.992mil     80.709mil   1062.992mil     210.63mil   1151.575mil  T        270.00 MSK-12C01-07   
 SW2        TL3342F160QG      2311.024mil    173.228mil   2311.024mil    173.228mil   2177.008mil     98.425mil  T          0.00 TL3342F160QG   
 SW1        TL3342F160QG      1917.323mil    173.228mil   1917.323mil    173.228mil   1783.307mil     98.425mil  T          0.00 TL3342F160QG   
@@ -14,10 +15,8 @@ R20        2012[0805]        1023.622mil    590.551mil   1023.622mil    590.551m
 R19        2012[0805]         748.032mil      78.74mil    748.032mil      78.74mil    785.433mil      78.74mil  T        180.00 Res            
 R18        2012[0805]        1901.575mil    814.961mil   1901.575mil    814.961mil   1864.173mil    814.961mil  T        360.00 Res            
 R17        2012[0805]        1023.622mil    708.661mil   1023.622mil    708.661mil   1061.024mil    708.661mil  T        180.00 Res            
-R16        2012[0805]         472.441mil    787.402mil    472.441mil    787.402mil    509.842mil    787.402mil  T        180.00 Res            
 R15        2012[0805]         472.441mil    944.882mil    472.441mil    944.882mil    435.039mil    944.882mil  T          0.00 Res            
 R14        2012[0805]         748.031mil    944.882mil    748.031mil    944.882mil     710.63mil    944.882mil  T          0.00 Res            
-R13        2012[0805]         472.441mil    629.921mil    472.441mil    629.921mil    435.039mil    629.921mil  T        360.00 Res            
 R12        2012[0805]        1940.945mil   1472.441mil   1940.945mil   1472.441mil   1940.945mil   1509.842mil  T        270.00 Res            
 R11        6332[2512]        2917.323mil    720.472mil   2917.323mil    720.472mil   2917.323mil    610.236mil  T         90.00 Res            
 R10        6332[2512]        2602.362mil    720.472mil   2602.362mil    720.472mil   2602.362mil    610.236mil  T         90.00 Res            

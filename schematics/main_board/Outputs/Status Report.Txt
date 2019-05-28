@@ -1,10 +1,12 @@
-Output: Generates pick and place files
-Type  : Pick Place
-From  : Variant [[No Variations]] of Project [main_board.PrjPcb]
-   Generated File[Pick Place for mainboard.txt]
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [main_board.PrjPcb]
+   Generated File[mainboard.TXT]
+   Generated File[mainboard.LDP]
+   Generated File[mainboard.DRR]
 
 
-Files Generated   : 1
+Files Generated   : 3
 Documents Printed : 0
 
-Finished Output Generation At 12:53:57 On 2019/02/06
+Finished Output Generation At 18:01:12 On 2019/05/27

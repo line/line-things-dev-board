@@ -14,12 +14,15 @@
  */
 
 #include <bluefruit.h>
-#include <Bluefruit_FileIO.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <SparkFun_MMA8452Q.h>
 #include <linethings_temp.h>
+#include <Adafruit_LittleFS.h>
+#include <InternalFileSystem.h>
+
+using namespace Adafruit_LittleFS_Namespace;
 
 // Debug On / Off
 //#define USER_DEBUG
@@ -38,7 +41,7 @@
 #define PSDI_CHARACTERISTIC_UUID "26e2b12b-85f0-4f3f-9fdd-91d114270e6e"
 // Device name and version
 #define BLE_DEV_NAME "LINE Things dev board"
-#define FIRMWARE_VERSION 2
+#define FIRMWARE_VERSION 3
 // Device and pin
 #define SW1 29
 #define SW2 28
@@ -56,6 +59,7 @@
 #define GPIO15 15
 #define GPIO16 16
 #define BUZZER_PIN 27
+#define ACCEL_ADDR 0x1C
 
 /*********************************************************************************
 * Internal config file
@@ -69,7 +73,8 @@ File file(InternalFS);
 // I2S Display
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 // Acceleration sensor. (MMA8452)
-MMA8452Q accel(0x1C);
+MMA8452Q accel(ACCEL_ADDR);
+bool accel_valid;
 // Temperature sensor (AT30TS74)
 ThingsTemp temp = ThingsTemp();
 
@@ -624,7 +629,7 @@ void sw2ChangedEvent() {
 *********************************************************************************/
 void configFileWrite(uint8_t binUuid[]) {
   int i = 0;
-  if (file.open(UUID_FILENAME, FILE_WRITE)) {
+  if (file.open(UUID_FILENAME, FILE_O_WRITE)) {
     file.seek(0);
 
     for (i = 0; i < 16; i++) {
@@ -637,13 +642,13 @@ void configFileWrite(uint8_t binUuid[]) {
 }
 
 void configFileRead() {
-  file.open(UUID_FILENAME, FILE_READ);
+  file.open(UUID_FILENAME, FILE_O_READ);
   file.read(blesv_user_uuid, sizeof(blesv_user_uuid));
   file.close();
 }
 
 int configFileExist() {
-  file.open(UUID_FILENAME, FILE_READ);
+  file.open(UUID_FILENAME, FILE_O_READ);
   if (!file) {
     file.close();
     return -1;
@@ -735,11 +740,17 @@ float tempRead() {
 }
 
 void accelRead(float data[3]) {
-  debugPrint("[BLE]Accel : read value");
-  accel.read();
-  data[0] = accel.x;
-  data[1] = accel.y;
-  data[2] = accel.z;
+  if (accel_valid) {
+    debugPrint("[BLE]Accel : read value");
+    accel.read();
+    data[0] = accel.x;
+    data[1] = accel.y;
+    data[2] = accel.z;
+  } else {
+    data[0] = 0;
+    data[1] = 0;
+    data[2] = 0;
+  }
 }
 
 void i2cBeginTransmission(byte address) {
@@ -827,7 +838,12 @@ void setup() {
   display.clearDisplay();
   display.display();
   // Acceleration sensor init
-  accel.init(SCALE_2G);
+  Wire.beginTransmission(ACCEL_ADDR);
+  accel_valid = false;
+  if (Wire.endTransmission() == 0) {
+    accel_valid = true;
+    accel.init(SCALE_2G);
+  }
   // Temperature sensor init
   temp.init();
   // ADC init
@@ -1092,12 +1108,12 @@ void loop() {
 
   bool refresh_display = g_flag_display && !g_display_user_mode && !g_i2c_user_mode;
   bool notify_sensor = g_flag_notify && blech_notify_board_state.notifyEnabled();
-  
+
   float temperature;
   // Read sensor value
   if (!g_i2c_user_mode && (refresh_display || notify_sensor)) {
     temperature = temp.read();
-    if (accel.available()) {
+    if (accel_valid) {
       accel.read();
     }
   }
@@ -1113,12 +1129,18 @@ void loop() {
     } else {
       display.println("LINE Things");
     }
-    display.print("X:");
-    display.println(accel.cx);
-    display.print("Y:");
-    display.println(accel.cy);
-    display.print("Z:");
-    display.println(accel.cz);
+    if (accel_valid) {
+      display.print("X:");
+      display.println(accel.cx);
+      display.print("Y:");
+      display.println(accel.cy);
+      display.print("Z:");
+      display.println(accel.cz);
+    } else {
+      display.println("X:-");
+      display.println("Y:-");
+      display.println("Z:-");
+    }
     display.print("Temperature:");
     display.println(temperature);
     if (g_data_sw1) {
@@ -1138,7 +1160,11 @@ void loop() {
   if (Bluefruit.connected()) {
     // Notify board state
     if (notify_sensor) {
-      notify_board_state(accel.cx, accel.cy, accel.cz, temperature, g_data_sw1, g_data_sw2);
+      if (accel_valid) {
+        notify_board_state(accel.cx, accel.cy, accel.cz, temperature, g_data_sw1, g_data_sw2);
+      } else {
+        notify_board_state(0, 0, 0, temperature, g_data_sw1, g_data_sw2);
+      }
       g_flag_notify = 0;
     }
     notify_sw_handler();

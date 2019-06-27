@@ -14,13 +14,11 @@
  */
 
 #include <bluefruit.h>
-//#include <Bluefruit_FileIO.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <SparkFun_MMA8452Q.h>
 #include <linethings_temp.h>
-
 #include <Adafruit_LittleFS.h>
 #include <InternalFileSystem.h>
 

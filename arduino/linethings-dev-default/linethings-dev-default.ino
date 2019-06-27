@@ -746,7 +746,7 @@ void accelRead(float data[3]) {
     data[0] = accel.x;
     data[1] = accel.y;
     data[2] = accel.z;
-  }else{
+  } else {
     data[0] = 0;
     data[1] = 0;
     data[2] = 0;
@@ -843,7 +843,6 @@ void setup() {
   if (Wire.endTransmission() == 0) {
     accel_valid = true;
     accel.init(SCALE_2G);
-
   }
   // Temperature sensor init
   temp.init();

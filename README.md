@@ -60,7 +60,7 @@ LIFFのJavaScript APIから、このデフォルトファームウェアの機�
 
 デフォルトファームウェアの仕様については、[デフォルトファームウェアについて](docs/default-firmware.md)を参照してください。
 JavaScriptライブラリについては、[JavaScript から LINE Things Board を制御する](docs/js-control.md)を参照してください。
-デフォルトファームウェアを利用したLIFFは `liff-app/linethings-dev-default/` と `liff-app/linethings-js-control/` に格納されています。
+デフォルトファームウェアを利用したLIFFは [`liff-app/linethings-dev-default/`](liff-app/linethings-dev-default/) と [`liff-app/linethings-dev-js-control/`](liff-app/linethings-dev-js-control/) に格納されています。
 
 このファームウェアは Advertising packet の Service UUID を LIFF 上から書き換える機能を持っています。
 この機能は LINE Developers から Service UUID を取得して、LINE Things developers trial の独自デバイスを構築する際に、
@@ -68,7 +68,7 @@ JavaScriptライブラリについては、[JavaScript から LINE Things Board 
 
 #### LIFFからService UUIDの変更と初期化
 LINE Things Developer Trialでは、プロダクト登録とそれに対応したGATT Service UUIDの設定が必要です。
-デフォルトファームウェアと LIFF (`liff-app/linethings-dev-default/`, `liff-app/linethings-js-control/`) では、LIFF上からService UUIDを書き換えることが可能です。
+デフォルトファームウェアと LIFF ([`liff-app/linethings-dev-default/`](liff-app/linethings-dev-default/), [`liff-app/linethings-dev-js-control/`](liff-app/linethings-dev-js-control/)) では、LIFF上からService UUIDを書き換えることが可能です。
 この機能を用いると、Service UUIDの書換の際にデバイスのファームウェアの書き換えが不要となります。
 
 ##### LIFFからService UUIDを書き換える
@@ -85,15 +85,14 @@ Dev boardのディスプレイに「BLE advertising uuid changed from LIFF....�
 ### ファームウェアをカスタマイズする
 [Adafruitがオープンソースで公開しているArduinoコア](https://github.com/adafruit/Adafruit_nRF52_Arduino)を利用して、Arduino IDEから簡単に開発することが可能です。
 
-ハードウェアの仕様については、[ハードウェア構成](#ハードウェア構成)を参考にしてください。
-ファームウェアの書き込み方法に関しては[ファームウェア書き込み方法](docs/update-firmware.md)を参考にしてください。
-サンプルコードについては、[サンプルコード](docs/examples.md)にそれぞれのデバイスを制御する方法を載せています。
-
-デフォルトファームウェアに戻したい場合には、`arduino/linethings-dev-default/linethings-dev-default.ino` を使用してください。
-このサンプルでは `things_temp_lib`、`SparkFun MMA8452Q Accelerometer`、`Adafruit SSD1306`、`Adafruit GFX Library` を使用しています。`things_temp_lib` は `library/things_temp_lib` をzipファイルに圧縮して、ライブラリをインクルードからインストールしてください。それ以外のライブラリはライブラリを管理からインストールしてください。
-
 [LINE Things Starter](https://github.com/line/line-things-starter) も、LINE Things dev board に対応しています。
 Starter のリポジトリから、LINE Things dev board 用のファームウェアを書き込んでください。
+
+デフォルトファームウェアに戻したい場合には、[`arduino/linethings-dev-default/`](arduino/linethings-dev-default) を使用してください。
+
+ハードウェアの仕様については、[ハードウェア構成](#ハードウェア構成)を参考にしてください。
+ファームウェアの書き込み方法に関しては、[ファームウェア書き込み方法](docs/update-firmware.md)を参考にしてください。
+[サンプルコード](docs/examples.md)にそれぞれのデバイスを制御する方法を載せています。
 
 ---
 

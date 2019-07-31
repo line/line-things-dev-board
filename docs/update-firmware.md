@@ -12,6 +12,17 @@ Arduino IDE をインストールた後、必ずボードを **接続しない�
 (*Note: Linux をお使いの方は追加でソフトウェアの設定が必要です、[こちらをご覧ください](https://learn.adafruit.com/bluefruit-nrf52-feather-learning-guide/arduino-bsp-setup)*)
 6. [CP2102N driver](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers) をインストールします
 
+## デフォルトファームウェア用のライブラリをインストール
+デフォルトファームウェア ([`arduino/linethings-dev-default/`](/arduino/linethings-dev-default)) を利用する場合には、以下のライブラリが必要です。
+Arduino のライブラリマネージャーからインストールしてください。
+
+- [SparkFun MMA8452Q Accelerometer](https://github.com/sparkfun/SparkFun_MMA8452Q_Arduino_Library)
+- [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library)
+- [Adafruit SSD1306](https://github.com/adafruit/Adafruit_SSD1306)
+
+また、温度センサーを動作させるために、`things_temp_lib` ライブラリを利用しています。
+`things_temp_lib` は `library/things_temp_lib` をzipファイルに圧縮して、ライブラリをインクルードからインストールしてください。
+
 ## ハードウェアセットアップ
 ### マザーボードにCPU基板を刺して使用する
 1. CPUボードがマザーボードに刺さっていることを確認してください

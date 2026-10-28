@@ -1,4 +1,17 @@
 # LINE Things development board
+
+> [!WARNING]
+> **This project has been discontinued.**
+>
+> LINE Things Developer Trial was discontinued on March 31, 2024.
+> See the [official announcement](https://developers.line.biz/ja/news/2024/05/13/line-things-docs-discontinued/).
+>
+> This repository is archived and retained for historical reference only.
+> No further updates, including bug fixes or security fixes, will be provided.
+> GitHub Pages hosting for this repository has also been discontinued.
+>
+> The instructions below are historical and refer to the discontinued service.
+
 LINE Things development boardは、[Nordic Semiconductor nRF52832](https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF52832)を搭載している[Raytac MDBT42Q](http://www.raytac.com/product/ins.php?index_id=31)モジュールを搭載したLINE Things実験用ボードです。
 CPUボードとマザーボードの2つの基板から構成されています。組み合わせることで動作検証をすることや、CPUボードは単体でもブレッドボード等を使って実験を行うことが可能です。
 
@@ -25,8 +38,6 @@ LINE ThingsやBluetooth LEの使い方などに関してはそれぞれのペー
 バージョン3以降のデフォルトファームウェアでは、加速度センサを検出できない場合、「-」を表示しています。
 
 ## 目次
-
-[Documentation on Github Pages](https://line.github.io/line-things-dev-board/)
 
 - README.md
   - [Quick Start](#quick-start)
